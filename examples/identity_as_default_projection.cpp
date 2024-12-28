@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-// This example demonstrates the usage of beman::exemplar::identity as a default projection in a range-printer.
+// This example demonstrates the usage of beman::transform_view_26::identity as a default projection in a range-printer.
 // Requires: range support (C++20) and std::identity support (C++20).
 // TODO Darius: Do we need to selectively compile this example?
 // Or should we assume that this project is compiled with C++20 support only?
 
-#include <beman/exemplar/identity.hpp>
+#include <beman/transform_view_26/identity.hpp>
 
 #include <algorithm>
 #include <functional> // std::identity
@@ -13,7 +13,7 @@
 #include <ranges>
 #include <string>
 
-namespace exe = beman::exemplar;
+namespace exe = beman::transform_view_26;
 
 // Class with a pair of values.
 struct Pair {

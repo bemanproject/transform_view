@@ -22,7 +22,7 @@
 
 #include <utility> // std::forward
 
-namespace beman::exemplar {
+namespace beman::transform_view_26 {
 
 struct __is_transparent; // not defined
 
@@ -37,6 +37,6 @@ struct identity {
     using is_transparent = __is_transparent;
 };
 
-} // namespace beman::exemplar
+} // namespace beman::transform_view_26
 
 #endif // BEMAN_EXEMPLAR_IDENTITY_HPP

@@ -3,9 +3,9 @@
 cmake_minimum_required(VERSION 3.25)
 
 project(
-    beman.exemplar # CMake Project Name, which is also the name of the top-level
+    beman.transform_view_26 # CMake Project Name, which is also the name of the top-level
     # targets (e.g., library, executable, etc.).
-    DESCRIPTION "A Beman library exemplar"
+    DESCRIPTION "A modified `std::ranges::transform_view` that is conditionally borrowed"
     LANGUAGES CXX
 )
 
@@ -43,10 +43,10 @@ if(BEMAN_EXEMPLAR_BUILD_TESTS)
     endblock()
 endif()
 
-add_subdirectory(src/beman/exemplar)
+add_subdirectory(src/beman/transform_view_26)
 
 if(BEMAN_EXEMPLAR_BUILD_TESTS)
-    add_subdirectory(tests/beman/exemplar)
+    add_subdirectory(tests/beman/transform_view_26)
 endif()
 
 if(BEMAN_EXEMPLAR_BUILD_EXAMPLES)
