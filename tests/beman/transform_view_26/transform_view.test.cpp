@@ -161,6 +161,175 @@ TEST(transform_view_, base_) {
     }
 }
 
+struct null_sentinel_t {
+    template <std::input_iterator I>
+        requires std::default_initializable<std::iter_value_t<I>> &&
+                 std::equality_comparable_with<std::iter_reference_t<I>,
+                                               std::iter_value_t<I>>
+    friend constexpr bool operator==(I it, null_sentinel_t) {
+        return *it == std::iter_value_t<I>{};
+    }
+};
+
+inline constexpr null_sentinel_t null_sentinel;
+
+template <typename CharT>
+constexpr auto null_term(CharT* ptr) {
+    return std::ranges::subrange(ptr, null_sentinel);
+}
+
+TEST(transform_view_, begin_end) {
+    {
+        auto view = tv26::transform_view(std::string(), copy_lambda);
+        EXPECT_EQ(view.begin(), view.end());
+        EXPECT_EQ(view.begin() - view.end(), 0);
+        EXPECT_EQ(view.end() - view.begin(), 0);
+        auto underlying_first = view.begin().base().base();
+        auto underlying_last  = view.end().base().base();
+        static_assert(std::same_as<decltype(underlying_first),
+                                   decltype(underlying_last)>);
+
+        {
+            const auto const_view = std::move(view);
+            EXPECT_EQ(const_view.begin(), const_view.end());
+            EXPECT_EQ(const_view.begin() - const_view.end(), 0);
+            EXPECT_EQ(const_view.end() - const_view.begin(), 0);
+            auto underlying_first = const_view.begin().base().base();
+            auto underlying_last  = const_view.end().base().base();
+            static_assert(std::same_as<decltype(underlying_first),
+                                       decltype(underlying_last)>);
+        }
+    }
+    {
+        auto view = tv26::transform_view(std::string("str"), copy_lambda);
+        EXPECT_NE(view.begin(), view.end());
+        EXPECT_EQ(view.begin() - view.end(), -3);
+        EXPECT_EQ(view.end() - view.begin(), 3);
+
+        {
+            auto it = view.begin();
+            for (auto it2 = view.begin(), last = view.end(); it2 != last;
+                 ++it2) {
+                EXPECT_EQ(*it2, *it++);
+            }
+        }
+        {
+            auto it = view.end();
+            for (auto it2 = view.end(), first = view.begin(); it2 != first;
+                 --it2) {
+                EXPECT_EQ(*std::ranges::prev(it2), *std::ranges::prev(it--));
+            }
+        }
+
+        EXPECT_FALSE(view.begin() != view.begin());
+        EXPECT_TRUE(view.begin() != view.end());
+        EXPECT_TRUE(view.begin() == view.begin());
+        EXPECT_FALSE(view.begin() == view.end());
+        EXPECT_FALSE(view.begin() < view.begin());
+        EXPECT_TRUE(view.begin() < view.end());
+        EXPECT_TRUE(view.begin() <= view.begin());
+        EXPECT_TRUE(view.begin() <= view.end());
+        EXPECT_TRUE(view.begin() >= view.begin());
+        EXPECT_FALSE(view.begin() >= view.end());
+        EXPECT_FALSE(view.begin() > view.begin());
+        EXPECT_FALSE(view.begin() > view.end());
+
+        EXPECT_TRUE(view.begin() <=> view.begin() == 0);
+        EXPECT_TRUE(view.begin() <=> view.end() < 0);
+        EXPECT_TRUE(view.end() <=> view.begin() > 0);
+
+        EXPECT_EQ(view.begin() + 1, view.end() - 2);
+        EXPECT_EQ(view.begin() + 2, view.end() - 1);
+        EXPECT_EQ(1 + view.begin(), view.end() - 2);
+        EXPECT_EQ(2 + view.begin(), view.end() - 1);
+        EXPECT_EQ(view.begin() += 1, view.end() -= 2);
+        EXPECT_EQ(view.begin() += 2, view.end() -= 1);
+
+        EXPECT_EQ(view.begin()[0], 's');
+        EXPECT_EQ(view.begin()[1], 't');
+        EXPECT_EQ(view.begin()[2], 'r');
+
+        {
+            const auto const_view = std::move(view);
+            EXPECT_NE(const_view.begin(), const_view.end());
+            EXPECT_EQ(const_view.begin() - const_view.end(), -3);
+            EXPECT_EQ(const_view.end() - const_view.begin(), 3);
+
+            {
+                auto it = const_view.begin();
+                for (auto it2 = const_view.begin(), last = const_view.end();
+                     it2 != last;
+                     ++it2) {
+                    EXPECT_EQ(*it2, *it++);
+                }
+            }
+            {
+                auto it = const_view.end();
+                for (auto it2 = const_view.end(), first = const_view.begin();
+                     it2 != first;
+                     --it2) {
+                    EXPECT_EQ(*std::ranges::prev(it2),
+                              *std::ranges::prev(it--));
+                }
+            }
+
+            EXPECT_FALSE(const_view.begin() != const_view.begin());
+            EXPECT_TRUE(const_view.begin() != const_view.end());
+            EXPECT_TRUE(const_view.begin() == const_view.begin());
+            EXPECT_FALSE(const_view.begin() == const_view.end());
+            EXPECT_FALSE(const_view.begin() < const_view.begin());
+            EXPECT_TRUE(const_view.begin() < const_view.end());
+            EXPECT_TRUE(const_view.begin() <= const_view.begin());
+            EXPECT_TRUE(const_view.begin() <= const_view.end());
+            EXPECT_TRUE(const_view.begin() >= const_view.begin());
+            EXPECT_FALSE(const_view.begin() >= const_view.end());
+            EXPECT_FALSE(const_view.begin() > const_view.begin());
+            EXPECT_FALSE(const_view.begin() > const_view.end());
+
+            EXPECT_TRUE(const_view.begin() <=> const_view.begin() == 0);
+            EXPECT_TRUE(const_view.begin() <=> const_view.end() < 0);
+            EXPECT_TRUE(const_view.end() <=> const_view.begin() > 0);
+
+            EXPECT_EQ(const_view.begin() + 1, const_view.end() - 2);
+            EXPECT_EQ(const_view.begin() + 2, const_view.end() - 1);
+            EXPECT_EQ(1 + const_view.begin(), const_view.end() - 2);
+            EXPECT_EQ(2 + const_view.begin(), const_view.end() - 1);
+            EXPECT_EQ(const_view.begin() += 1, const_view.end() -= 2);
+            EXPECT_EQ(const_view.begin() += 2, const_view.end() -= 1);
+
+            EXPECT_EQ(const_view.begin()[0], 's');
+            EXPECT_EQ(const_view.begin()[1], 't');
+            EXPECT_EQ(const_view.begin()[2], 'r');
+        }
+    }
+    {
+        const char* str  = "";
+        auto        view = tv26::transform_view(null_term(str), copy_lambda);
+        EXPECT_EQ(view.begin(), view.end());
+        auto underlying_first = view.begin().base();
+        auto underlying_last  = view.end().base();
+        static_assert(!std::same_as<decltype(underlying_first),
+                                    decltype(underlying_last)>);
+        static_assert(std::same_as<decltype(underlying_last), null_sentinel_t>);
+
+        {
+            const auto const_view = std::move(view);
+            EXPECT_EQ(const_view.begin(), const_view.end());
+            auto underlying_first = const_view.begin().base();
+            auto underlying_last  = const_view.end().base();
+            static_assert(!std::same_as<decltype(underlying_first),
+                                        decltype(underlying_last)>);
+            static_assert(
+                std::same_as<decltype(underlying_last), null_sentinel_t>);
+        }
+    }
+    {
+        const char* str  = "str";
+        auto        view = tv26::transform_view(null_term(str), copy_lambda);
+        EXPECT_NE(view.begin(), view.end());
+    }
+}
+
 TEST(transform_view_, copy_func_empty_range_copy_alg) {
     std::vector<int> ints;
 
@@ -287,23 +456,6 @@ TEST(transform_view_, lower_upper_func_adaptor_to_vec) {
                          tv26::views::transform(upper_lambda) |
                          std::ranges::to<std::basic_string>();
     EXPECT_EQ(result, "UPPER");
-}
-
-struct null_sentinel_t {
-    template <std::input_iterator I>
-        requires std::default_initializable<std::iter_value_t<I>> &&
-                 std::equality_comparable_with<std::iter_reference_t<I>,
-                                               std::iter_value_t<I>>
-    friend constexpr bool operator==(I it, null_sentinel_t) {
-        return *it == std::iter_value_t<I>{};
-    }
-};
-
-inline constexpr null_sentinel_t null_sentinel;
-
-template <typename CharT>
-constexpr auto null_term(CharT* ptr) {
-    return std::ranges::subrange(ptr, null_sentinel);
 }
 
 TEST(transform_view_, sentinel_lower_func_copy_alg) {
