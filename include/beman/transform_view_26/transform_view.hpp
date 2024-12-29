@@ -112,6 +112,9 @@ template <std::ranges::input_range V, std::move_constructible F>
 class transform_view
     : public std::ranges::view_interface<transform_view<V, F>> {
     template <bool Const>
+    class sentinel;
+
+    template <bool Const>
     class iterator
         : public detail::iterator_category_base<detail::maybe_const<Const, V>,
                                                 detail::maybe_const<Const, F>> {
@@ -120,6 +123,9 @@ class transform_view
         std::ranges::iterator_t<Base> current_ =
             std::ranges::iterator_t<Base>();
         Parent* parent_ = nullptr;
+
+        template<bool>
+        friend class sentinel;
 
       public:
         using iterator_concept = decltype(detail::concept_tag<Base>());

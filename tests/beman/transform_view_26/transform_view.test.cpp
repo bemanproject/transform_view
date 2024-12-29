@@ -288,3 +288,70 @@ TEST(transform_view_, lower_upper_func_adaptor_to_vec) {
                          std::ranges::to<std::basic_string>();
     EXPECT_EQ(result, "UPPER");
 }
+
+struct null_sentinel_t {
+    template <std::input_iterator I>
+        requires std::default_initializable<std::iter_value_t<I>> &&
+                 std::equality_comparable_with<std::iter_reference_t<I>,
+                                               std::iter_value_t<I>>
+    friend constexpr bool operator==(I it, null_sentinel_t) {
+        return *it == std::iter_value_t<I>{};
+    }
+};
+
+inline constexpr null_sentinel_t null_sentinel;
+
+template <typename CharT>
+constexpr auto null_term(CharT* ptr) {
+    return std::ranges::subrange(ptr, null_sentinel);
+}
+
+TEST(transform_view_, sentinel_lower_func_copy_alg) {
+    const char* str = "LOWER";
+    std::string result;
+    std::ranges::copy(tv26::transform_view(null_term(str), lower_lambda),
+                      std::back_inserter(result));
+    EXPECT_EQ(result, "lower");
+}
+
+TEST(transform_view_, sentinel_lower_func_range_adaptor) {
+    const char* str = "LOWER";
+    std::string result;
+    std::ranges::copy(null_term(str) | tv26::views::transform(lower_lambda),
+                      std::back_inserter(result));
+    EXPECT_EQ(result, "lower");
+}
+
+TEST(transform_view_, sentinel_lower_func_adaptor_to_vec) {
+    const char* str    = "LOWER";
+    std::string result = null_term(str) | tv26::views::transform(lower_lambda) |
+                         std::ranges::to<std::basic_string>();
+    EXPECT_EQ(result, "lower");
+}
+
+TEST(transform_view_, sentinel_lower_upper_func_copy_alg) {
+    const char* str = "UPPER";
+    std::string result;
+    std::ranges::copy(
+        tv26::transform_view(tv26::transform_view(null_term(str), lower_lambda),
+                             upper_lambda),
+        std::back_inserter(result));
+    EXPECT_EQ(result, "UPPER");
+}
+
+TEST(transform_view_, sentinel_lower_upper_func_range_adaptor) {
+    const char* str = "UPPER";
+    std::string result;
+    std::ranges::copy(null_term(str) | tv26::views::transform(lower_lambda) |
+                          tv26::views::transform(upper_lambda),
+                      std::back_inserter(result));
+    EXPECT_EQ(result, "UPPER");
+}
+
+TEST(transform_view_, sentinel_lower_upper_func_adaptor_to_vec) {
+    const char* str    = "UPPER";
+    std::string result = null_term(str) | tv26::views::transform(lower_lambda) |
+                         tv26::views::transform(upper_lambda) |
+                         std::ranges::to<std::basic_string>();
+    EXPECT_EQ(result, "UPPER");
+}
