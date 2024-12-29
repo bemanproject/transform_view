@@ -63,6 +63,7 @@ struct iterator_category_base<Base, F, int> {};
 
 template <typename T>
 concept boxable = std::move_constructible<T> && std::is_object_v<T>;
+
 template <boxable T>
 struct movable_box : std::optional<T> {
     constexpr movable_box() noexcept(std::is_nothrow_default_constructible_v<T>)
