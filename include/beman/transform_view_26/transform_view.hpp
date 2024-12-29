@@ -4,6 +4,8 @@
 #define BEMAN_TRANSFORM_VIEW_HPP
 
 #include <functional>
+#include <iterator>
+#include <optional>
 #include <ranges>
 
 namespace beman::transform_view_26 {
@@ -35,11 +37,11 @@ constexpr auto category_tag() {
     if constexpr (!std::ranges::forward_range<Base>) {
         return 0; // int means "no tag"
     } else {
-        using C = typename std::iterator_traits<
-            std::ranges::iterator_t<Base>>::​iterator_category;
         constexpr bool call_result_is_ref = std::is_reference_v<
             std::invoke_result_t<F&, std::ranges::range_reference_t<Base>>>;
         if constexpr (call_result_is_ref) {
+            using C = typename std::iterator_traits<
+                std::ranges::iterator_t<Base>>::iterator_category;
             if constexpr (std::derived_from<C, std::contiguous_iterator_tag>) {
                 return std::random_access_iterator_tag{};
             } else {
@@ -368,23 +370,145 @@ template <typename R, typename F>
 transform_view(R&&, F) -> transform_view<std::ranges::views::all_t<R>, F>;
 
 namespace views {
+
 namespace detail {
+
 template <typename Range, typename F>
 concept can_transform_view =
     requires { transform_view(std::declval<Range>(), std::declval<F>()); };
+
+#if 20 <= __clang_major__ ||                                     \
+    (defined(__cpp_lib_ranges) && 202202L <= __cpp_lib_ranges && \
+     !defined(__clang__))
+template <typename T>
+using range_adaptor_closure = std::ranges::range_adaptor_closure<T>;
+
+template <typename Func, typename... Args>
+constexpr auto bind_back(Func&& f, Args&&... args) {
+    return std::bind_back((Func&&)f, (Args&&)args...);
+}
+#else
+template <typename Func, typename... CapturedArgs>
+struct bind_back_t {
+    static_assert(std::is_move_constructible<Func>::value, "");
+    static_assert((std::is_move_constructible<CapturedArgs>::value && ...), "");
+
+    template <typename F, typename... Args>
+    explicit constexpr bind_back_t(int, F&& f, Args&&... args)
+        : f_((F&&)f), bound_args_((Args&&)args...) {
+        static_assert(sizeof...(Args) == sizeof...(CapturedArgs), "");
+    }
+
+    template <typename... Args>
+    constexpr decltype(auto) operator()(Args&&... args) & {
+        return call_impl(*this, indices(), (Args&&)args...);
+    }
+
+    template <typename... Args>
+    constexpr decltype(auto) operator()(Args&&... args) const& {
+        return call_impl(*this, indices(), (Args&&)args...);
+    }
+
+    template <typename... Args>
+    constexpr decltype(auto) operator()(Args&&... args) && {
+        return call_impl(std::move(*this), indices(), (Args&&)args...);
+    }
+
+    template <typename... Args>
+    constexpr decltype(auto) operator()(Args&&... args) const&& {
+        return call_impl(std::move(*this), indices(), (Args&&)args...);
+    }
+
+  private:
+    using indices = std::index_sequence_for<CapturedArgs...>;
+
+    template <typename T, size_t... I, typename... Args>
+    static constexpr decltype(auto)
+    call_impl(T&& this_, std::index_sequence<I...>, Args&&... args) {
+        return ((T&&)this_)
+            .f_((Args&&)args..., std::get<I>(((T&&)this_).bound_args_)...);
+    }
+
+    [[no_unique_address]] Func  f_;
+    std::tuple<CapturedArgs...> bound_args_;
+};
+
+template <typename Func, typename... Args>
+using bind_back_result = bind_back_t<std::decay_t<Func>, std::decay_t<Args>...>;
+
+template <typename Func, typename... Args>
+constexpr auto bind_back(Func&& f, Args&&... args) {
+    return detail::bind_back_result<Func, Args...>(
+        0, (Func&&)f, (Args&&)args...);
+}
+
+template <typename D>
+    requires std::is_class_v<D> && std::same_as<D, std::remove_cv_t<D>>
+struct range_adaptor_closure {
+    template <typename T>
+        requires std::invocable<D, T>
+    [[nodiscard]] friend constexpr decltype(auto) operator|(T&& t, D&& d) {
+        return std::move(d)((T&&)t);
+    }
+
+    template <typename T>
+        requires std::invocable<const D&, T>
+    [[nodiscard]] friend constexpr decltype(auto) operator|(T&& t, const D& d) {
+        return d((T&&)t);
+    }
+
+    using inheritance_tag_with_an_unlikely_name_ = int;
+};
+#endif
+
+template <typename F>
+struct closure : range_adaptor_closure<closure<F>> {
+    constexpr closure(F f) : f_(f) {}
+
+    template <typename T>
+        requires std::invocable<const F&, T>
+    constexpr decltype(auto) operator()(T&& t) const& {
+        return f_((T&&)t);
+    }
+
+    template <typename T>
+        requires std::invocable<F&&, T>
+    constexpr decltype(auto) operator()(T&& t) && {
+        return std::move(f_)((T&&)t);
+    }
+
+  private:
+    [[no_unique_address]] F f_;
+};
+
+template <typename F>
+struct adaptor {
+    constexpr adaptor(F f) : f_(f) {}
+
+    template <typename... Args>
+    constexpr auto operator()(Args&&... args) const {
+        if constexpr (std::is_invocable_v<const F&, Args...>) {
+            return f_((Args&&)args...);
+        } else {
+            return closure(detail::bind_back(f_, (Args&&)args...));
+        }
+    }
+
+  private:
+    [[no_unique_address]] F f_;
+};
+
 } // namespace detail
 
-struct transform_impl : std::ranges::range_adaptor_closure<transform_impl> {
+struct transform_impl {
     template <std::ranges::viewable_range Range, typename F>
         requires detail::can_transform_view<Range, F>
     constexpr auto operator() [[nodiscard]] (Range&& r, F&& f) const {
         return transform_view((Range&&)r, (F&&)f);
     }
-
-    // TODO using std::ranges::range_adaptor_closure<transform_impl>::operator();
 };
 
-inline constexpr transform_impl transform;
+inline constexpr detail::adaptor<transform_impl> transform = transform_impl{};
 } // namespace views
 
 } // namespace beman::transform_view_26

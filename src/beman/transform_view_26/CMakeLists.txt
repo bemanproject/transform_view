@@ -3,14 +3,14 @@
 add_library(beman.transform_view_26 STATIC)
 add_library(beman::transform_view_26 ALIAS beman.transform_view_26)
 
-target_sources(beman.transform_view_26 PRIVATE identity.cpp)
+target_sources(beman.transform_view_26 PRIVATE transform_view.cpp)
 
 target_sources(
     beman.transform_view_26
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS ${PROJECT_SOURCE_DIR}/include
-        FILES ${PROJECT_SOURCE_DIR}/include/beman/transform_view_26/identity.hpp
+        FILES ${PROJECT_SOURCE_DIR}/include/beman/transform_view_26/transform_view.hpp
 )
 
 set_target_properties(beman.transform_view_26 PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)

@@ -2,11 +2,11 @@
 
 include(GoogleTest)
 
-add_executable(beman.transform_view_26.tests.identity)
-target_sources(beman.transform_view_26.tests.identity PRIVATE identity.test.cpp)
+add_executable(beman.transform_view_26.tests.transform_view)
+target_sources(beman.transform_view_26.tests.transform_view PRIVATE transform_view.test.cpp)
 target_link_libraries(
-    beman.transform_view_26.tests.identity
+    beman.transform_view_26.tests.transform_view
     PRIVATE beman::transform_view_26 GTest::gtest GTest::gtest_main
 )
 
-gtest_add_tests(beman.transform_view_26.tests.identity "" AUTO)
+gtest_add_tests(beman.transform_view_26.tests.transform_view "" AUTO)

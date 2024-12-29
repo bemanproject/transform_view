@@ -13,6 +13,7 @@ on:
 jobs:
   preset-test:
     strategy:
+      fail-fast: false
       matrix:
         presets:
           - preset: "gcc-debug"
@@ -50,14 +51,14 @@ jobs:
       matrix:
         platform:
           - description: "Ubuntu GCC"
-            cpp: g++
+            cpp: g++-14
             c: gcc
             os: ubuntu-latest
           - description: "Ubuntu Clang"
             cpp: clang++
             c: clang
             os: ubuntu-latest
-        cpp_version: [17, 20, 23, 26]
+        cpp_version: [23, 26]
         cmake_args:
           - description: "Default"
             args: ""
@@ -65,46 +66,6 @@ jobs:
             args: "-DCMAKE_CXX_FLAGS=-fsanitize=thread"
           - description: "ASan"
             args: "-DCMAKE_CXX_FLAGS='-fsanitize=address -fsanitize=undefined'"
-        include:
-          - platform:
-              description: "Ubuntu GCC"
-              cpp: g++
-              c: gcc
-              os: ubuntu-latest
-            cpp_version: 17
-            cmake_args:
-              description: "Werror"
-              args: "-DCMAKE_CXX_FLAGS='-Werror=all -Werror=extra'"
-          - platform:
-              description: "Ubuntu GCC"
-              cpp: g++
-              c: gcc
-              os: ubuntu-latest
-            cpp_version: 17
-            cmake_args:
-              description: "Dynamic"
-              args: "-DBUILD_SHARED_LIBS=on"
-          - platform:
-              description: "Windows MSVC"
-              cpp: cl
-              c: cl
-              os: windows-latest
-            cpp_version: 17
-            cmake_args:
-              description: "Default"
-              args: ""
-          - platform:
-              description: "Windows MSVC"
-              cpp: cl
-              c: cl
-              os: windows-latest
-            cpp_version: 17
-            cmake_args:
-              description: "ASan"
-              # Debug infomation needed to avoid cl: C5072
-              # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-c5072?view=msvc-170
-              args: "-DCMAKE_CXX_FLAGS='/fsanitize=address /Zi'"
-
 
     name: "Unit: ${{ matrix.platform.description }} ${{ matrix.cpp_version }} ${{ matrix.cmake_args.description }}"
     runs-on: ${{ matrix.platform.os }}
@@ -166,12 +127,13 @@ jobs:
   configuration-test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         args:
           - name: "Disable build testing"
-            arg: "-DBEMAN_EXEMPLAR_BUILD_TESTS=OFF"
+            arg: "-DBEMAN_EXEMPLAR_BUILD_TESTS=OFF -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=g++-14"
           - name: "Disable example building"
-            arg: "-DBEMAN_EXEMPLAR_BUILD_EXAMPLES=OFF"
+            arg: "-DBEMAN_EXEMPLAR_BUILD_EXAMPLES=OFF -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=g++-14"
     name: "CMake: ${{ matrix.args.name }}"
     steps:
       - uses: actions/checkout@v4
@@ -186,7 +148,7 @@ jobs:
           ninja --version
       - name: Configure CMake
         run: |
-          cmake -B build -S . -DCMAKE_CXX_STANDARD=17 ${{ matrix.args.arg }}
+          cmake -B build -S . -DCMAKE_CXX_STANDARD=23 ${{ matrix.args.arg }}
         env:
           CMAKE_GENERATOR: "Ninja Multi-Config"
       - name: Build Release
@@ -207,22 +169,17 @@ jobs:
   compiler-test:
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         compilers:
           - class: GNU
             version: 14
-          - class: GNU
-            version: 13
-          - class: GNU
-            version: 12
           - class: LLVM
             version: 20
           - class: LLVM
             version: 19
           - class: LLVM
             version: 18
-          - class: LLVM
-            version: 17
     name: "Compiler: ${{ matrix.compilers.class }} ${{ matrix.compilers.version }}"
     steps:
       - uses: actions/checkout@v4
@@ -261,7 +218,7 @@ jobs:
           echo "CXX=$CXX" >> "$GITHUB_OUTPUT"
       - name: Configure CMake
         run: |
-          cmake -B build -S . -DCMAKE_CXX_STANDARD=20
+          cmake -B build -S . -DCMAKE_CXX_STANDARD=23
         env:
           CC: ${{ steps.install-compiler.outputs.CC }}
           CXX: ${{ steps.install-compiler.outputs.CXX }}
