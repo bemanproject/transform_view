@@ -174,8 +174,8 @@ jobs:
         compilers:
           - class: GNU
             version: 14
-          - class: LLVM
-            version: 20
+# TODO          - class: LLVM
+# TODO            version: 20
           - class: LLVM
             version: 19
           - class: LLVM
