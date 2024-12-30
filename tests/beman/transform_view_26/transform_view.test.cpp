@@ -184,20 +184,24 @@ TEST(transform_view_, begin_end) {
         EXPECT_EQ(view.begin(), view.end());
         EXPECT_EQ(view.begin() - view.end(), 0);
         EXPECT_EQ(view.end() - view.begin(), 0);
+#if !defined(_MSC_VER)
         auto underlying_first = view.begin().base().base();
         auto underlying_last  = view.end().base().base();
         static_assert(std::same_as<decltype(underlying_first),
                                    decltype(underlying_last)>);
+#endif
 
         {
             const auto const_view = std::move(view);
             EXPECT_EQ(const_view.begin(), const_view.end());
             EXPECT_EQ(const_view.begin() - const_view.end(), 0);
             EXPECT_EQ(const_view.end() - const_view.begin(), 0);
+#if !defined(_MSC_VER)
             auto underlying_first = const_view.begin().base().base();
             auto underlying_last  = const_view.end().base().base();
             static_assert(std::same_as<decltype(underlying_first),
                                        decltype(underlying_last)>);
+#endif
         }
     }
     {
