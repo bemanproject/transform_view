@@ -127,14 +127,17 @@ class transform_view
     class iterator
         : public detail::iterator_category_base<detail::maybe_const<Const, V>,
                                                 detail::maybe_const<Const, F>> {
-        using Parent = detail::maybe_const<Const, transform_view>;
-        using Base   = detail::maybe_const<Const, V>;
+        template <bool>
+        friend class transform_view::sentinel;
+
+        using Parent    = detail::maybe_const<Const, transform_view>;
+        using Base      = detail::maybe_const<Const, V>;
+        Parent* parent_ = nullptr;
+#if defined(_MSC_VER)
+      public:
+#endif
         std::ranges::iterator_t<Base> current_ =
             std::ranges::iterator_t<Base>();
-        Parent* parent_ = nullptr;
-
-        template<bool>
-        friend class sentinel;
 
       public:
         using iterator_concept = decltype(detail::concept_tag<Base>());
