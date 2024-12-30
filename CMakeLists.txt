@@ -11,14 +11,14 @@ project(
 
 # [CMAKE.SKIP_TESTS]
 option(
-    BEMAN_EXEMPLAR_BUILD_TESTS
+    BEMAN_TRANSFORM_VIEW_26_BUILD_TESTS
     "Enable building tests and test infrastructure. Default: ON. Values: { ON, OFF }."
     ${PROJECT_IS_TOP_LEVEL}
 )
 
 # [CMAKE.SKIP_EXAMPLES]
 option(
-    BEMAN_EXEMPLAR_BUILD_EXAMPLES
+    BEMAN_TRANSFORM_VIEW_26_BUILD_EXAMPLES
     "Enable building examples. Default: ON. Values: { ON, OFF }."
     ${PROJECT_IS_TOP_LEVEL}
 )
@@ -26,7 +26,7 @@ option(
 include(FetchContent)
 include(GNUInstallDirs)
 
-if(BEMAN_EXEMPLAR_BUILD_TESTS)
+if(BEMAN_TRANSFORM_VIEW_26_BUILD_TESTS)
     enable_testing()
 
     # Fetch GoogleTest
@@ -45,10 +45,10 @@ endif()
 
 add_subdirectory(src/beman/transform_view_26)
 
-if(BEMAN_EXEMPLAR_BUILD_TESTS)
+if(BEMAN_TRANSFORM_VIEW_26_BUILD_TESTS)
     add_subdirectory(tests/beman/transform_view_26)
 endif()
 
-if(BEMAN_EXEMPLAR_BUILD_EXAMPLES)
+if(BEMAN_TRANSFORM_VIEW_26_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()

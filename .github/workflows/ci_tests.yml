@@ -110,8 +110,8 @@ jobs:
           # Portable commands only
           cmake --build build --config Release --verbose
           cmake --build build --config Release --target all_verify_interface_header_sets
-          cmake --install build --config Release --prefix /opt/beman.exemplar
-          ls -R /opt/beman.exemplar
+          cmake --install build --config Release --prefix /opt/beman.transform_view_26
+          ls -R /opt/beman.transform_view_26
       - name: Test Release
         run: ctest --test-dir build --build-config Release
       - name: Build Debug
@@ -119,8 +119,8 @@ jobs:
           # Portable commands only
           cmake --build build --config Debug --verbose
           cmake --build build --config Debug --target all_verify_interface_header_sets
-          cmake --install build --config Debug --prefix /opt/beman.exemplar
-          ls -R /opt/beman.exemplar
+          cmake --install build --config Debug --prefix /opt/beman.transform_view_26
+          ls -R /opt/beman.transform_view_26
       - name: Test Debug
         run: ctest --test-dir build --build-config Debug
 
@@ -131,9 +131,9 @@ jobs:
       matrix:
         args:
           - name: "Disable build testing"
-            arg: "-DBEMAN_EXEMPLAR_BUILD_TESTS=OFF -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=g++-14"
+            arg: "-DBEMAN_TRANSFORM_VIEW_26_BUILD_TESTS=OFF -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=g++-14"
           - name: "Disable example building"
-            arg: "-DBEMAN_EXEMPLAR_BUILD_EXAMPLES=OFF -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=g++-14"
+            arg: "-DBEMAN_TRANSFORM_VIEW_26_BUILD_EXAMPLES=OFF -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=g++-14"
     name: "CMake: ${{ matrix.args.name }}"
     steps:
       - uses: actions/checkout@v4
@@ -156,15 +156,15 @@ jobs:
           # Portable commands only
           cmake --build build --config Release --verbose
           cmake --build build --config Release --target all_verify_interface_header_sets
-          cmake --install build --config Release --prefix /opt/beman.exemplar
-          ls -R /opt/beman.exemplar
+          cmake --install build --config Release --prefix /opt/beman.transform_view_26
+          ls -R /opt/beman.transform_view_26
       - name: Build Debug
         run: |
           # Portable commands only
           cmake --build build --config Debug --verbose
           cmake --build build --config Debug --target all_verify_interface_header_sets
-          cmake --install build --config Debug --prefix /opt/beman.exemplar
-          ls -R /opt/beman.exemplar
+          cmake --install build --config Debug --prefix /opt/beman.transform_view_26
+          ls -R /opt/beman.transform_view_26
 
   compiler-test:
     runs-on: ubuntu-24.04
@@ -227,8 +227,8 @@ jobs:
         run: |
           cmake --build build --config Debug --verbose
           cmake --build build --config Debug --target all_verify_interface_header_sets
-          cmake --install build --config Debug --prefix /opt/beman.exemplar
-          find /opt/beman.exemplar -type f
+          cmake --install build --config Debug --prefix /opt/beman.transform_view_26
+          find /opt/beman.transform_view_26 -type f
       - name: Test Debug
         run: ctest --test-dir build --build-config Debug
 
