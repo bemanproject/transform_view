@@ -151,8 +151,7 @@ class transform_view
         = default;
         constexpr iterator(Parent&                       parent,
                            std::ranges::iterator_t<Base> current)
-            : current_(std::move(current)),
-              parent_(std::addressof(parent)) {}
+            : current_(std::move(current)), parent_(std::addressof(parent)) {}
         constexpr iterator(iterator<!Const> i)
             requires Const && std::convertible_to<std::ranges::iterator_t<V>,
                                                   std::ranges::iterator_t<Base>>

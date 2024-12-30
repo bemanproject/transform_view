@@ -105,7 +105,7 @@ TEST(transform_view_, iter_concept_categroy) {
 
 TEST(transform_view_, default_ctor) {
     tv26::transform_view<std::ranges::empty_view<int>, decltype(copy_lambda)>
-        view;
+                     view;
     std::vector<int> result;
     std::ranges::copy(view, std::back_inserter(result));
     EXPECT_TRUE(result.empty());
@@ -429,7 +429,7 @@ TEST(transform_view_, lower_func_range_adaptor) {
 }
 
 TEST(transform_view_, lower_func_adaptor_to_vec) {
-    std::string str = "LOWER";
+    std::string str    = "LOWER";
     std::string result = str | tv26::views::transform(lower_lambda) |
                          std::ranges::to<std::basic_string>();
     EXPECT_EQ(result, "lower");
@@ -455,7 +455,7 @@ TEST(transform_view_, lower_upper_func_range_adaptor) {
 }
 
 TEST(transform_view_, lower_upper_func_adaptor_to_vec) {
-    std::string str = "UPPER";
+    std::string str    = "UPPER";
     std::string result = str | tv26::views::transform(lower_lambda) |
                          tv26::views::transform(upper_lambda) |
                          std::ranges::to<std::basic_string>();

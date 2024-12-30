@@ -5,7 +5,8 @@ cmake_minimum_required(VERSION 3.25)
 project(
     beman.transform_view_26 # CMake Project Name, which is also the name of the top-level
     # targets (e.g., library, executable, etc.).
-    DESCRIPTION "A modified `std::ranges::transform_view` that is conditionally borrowed"
+    DESCRIPTION
+        "A modified `std::ranges::transform_view` that is conditionally borrowed"
     LANGUAGES CXX
 )
 
