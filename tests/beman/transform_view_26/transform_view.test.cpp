@@ -507,3 +507,23 @@ TEST(transform_view_, sentinel_lower_upper_func_adaptor_to_vec) {
                          std::ranges::to<std::basic_string>();
     EXPECT_EQ(result, "UPPER");
 }
+
+TEST(transform_view_, borrowability) {
+    {
+        auto view = std::string() | tv26::views::transform(lower_lambda);
+        static_assert(!std::ranges::borrowed_range<decltype(view)>);
+    }
+    {
+        const char* str = "";
+        auto view       = null_term(str) | tv26::views::transform(lower_lambda);
+        static_assert(std::ranges::borrowed_range<decltype(null_term(str))>);
+        static_assert(!std::ranges::borrowed_range<decltype(view)>);
+    }
+    {
+        const char* str = "";
+        auto view = null_term(str) | tv26::views::transform(lower_lambda) |
+                    tv26::views::transform(upper_lambda);
+        static_assert(std::ranges::borrowed_range<decltype(null_term(str))>);
+        static_assert(!std::ranges::borrowed_range<decltype(view)>);
+    }
+}
