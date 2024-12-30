@@ -104,9 +104,13 @@ struct movable_box : std::optional<T> {
 };
 
 template <class F>
-constexpr bool tidy_func =
-    std::is_empty_v<F> && std::is_trivially_default_constructible_v<F> &&
-    std::is_trivially_destructible_v<F>;
+constexpr bool tidy_func = std::is_empty_v<F> &&
+#if defined(__APPLE__)
+                           std::is_default_constructible_v<F> &&
+#else
+                           std::is_trivially_constructible_v<F> &&
+#endif
+                           std::is_trivially_destructible_v<F>;
 } // namespace detail
 
 template <std::ranges::input_range V, std::move_constructible F>
