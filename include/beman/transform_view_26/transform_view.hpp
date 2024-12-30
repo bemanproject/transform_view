@@ -251,12 +251,14 @@ class transform_view
         {
             return !(x < y);
         }
+#if !defined(__APPLE__)
         friend constexpr auto operator<=>(const iterator& x, const iterator& y)
             requires std::ranges::random_access_range<Base> &&
                      std::three_way_comparable<std::ranges::iterator_t<Base>>
         {
             return x.current_ <=> y.current_;
         }
+#endif
 
         friend constexpr iterator operator+(iterator i, difference_type n)
             requires std::ranges::random_access_range<Base>

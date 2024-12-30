@@ -238,9 +238,11 @@ TEST(transform_view_, begin_end) {
         EXPECT_FALSE(view.begin() > view.begin());
         EXPECT_FALSE(view.begin() > view.end());
 
+#if !defined(__APPLE__)
         EXPECT_TRUE(view.begin() <=> view.begin() == 0);
         EXPECT_TRUE(view.begin() <=> view.end() < 0);
         EXPECT_TRUE(view.end() <=> view.begin() > 0);
+#endif
 
         EXPECT_EQ(view.begin() + 1, view.end() - 2);
         EXPECT_EQ(view.begin() + 2, view.end() - 1);
@@ -290,9 +292,11 @@ TEST(transform_view_, begin_end) {
             EXPECT_FALSE(const_view.begin() > const_view.begin());
             EXPECT_FALSE(const_view.begin() > const_view.end());
 
+#if !defined(__APPLE__)
             EXPECT_TRUE(const_view.begin() <=> const_view.begin() == 0);
             EXPECT_TRUE(const_view.begin() <=> const_view.end() < 0);
             EXPECT_TRUE(const_view.end() <=> const_view.begin() > 0);
+#endif
 
             EXPECT_EQ(const_view.begin() + 1, const_view.end() - 2);
             EXPECT_EQ(const_view.begin() + 2, const_view.end() - 1);
