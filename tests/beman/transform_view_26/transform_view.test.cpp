@@ -517,13 +517,61 @@ TEST(transform_view_, borrowability) {
         const char* str = "";
         auto view       = null_term(str) | tv26::views::transform(lower_lambda);
         static_assert(std::ranges::borrowed_range<decltype(null_term(str))>);
-        static_assert(!std::ranges::borrowed_range<decltype(view)>);
+        static_assert(std::ranges::borrowed_range<decltype(view)>);
     }
     {
         const char* str = "";
         auto view = null_term(str) | tv26::views::transform(lower_lambda) |
                     tv26::views::transform(upper_lambda);
         static_assert(std::ranges::borrowed_range<decltype(null_term(str))>);
-        static_assert(!std::ranges::borrowed_range<decltype(view)>);
+        static_assert(std::ranges::borrowed_range<decltype(view)>);
     }
 }
+
+auto make_transform_view_subrange(const char* str) {
+    auto view = null_term(str) | tv26::views::transform(lower_lambda);
+    return std::ranges::subrange(view.begin(), view.end());
+}
+
+auto make_nested_transform_view_subrange(const char* str) {
+    auto view = null_term(str) | tv26::views::transform(lower_lambda) |
+                tv26::views::transform(upper_lambda);
+    return std::ranges::subrange(view.begin(), view.end());
+}
+
+TEST(transform_view_, borrowability_safety) {
+    {
+        const char* str    = "LOWER";
+        auto        view   = make_transform_view_subrange(str);
+        std::string result = view | std::ranges::to<std::basic_string>();
+        EXPECT_EQ(result, "lower");
+    }
+    {
+        const char* str  = "UPPER";
+        auto        view = make_transform_view_subrange(str) |
+                    tv26::views::transform(upper_lambda);
+        std::string result = view | std::ranges::to<std::basic_string>();
+        EXPECT_EQ(result, "UPPER");
+    }
+    {
+        const char* str    = "UPPER";
+        auto        view   = make_nested_transform_view_subrange(str);
+        std::string result = view | std::ranges::to<std::basic_string>();
+        EXPECT_EQ(result, "UPPER");
+    }
+}
+
+#if 0 // Enable this to see ASan catch the memory unsafety of using a
+      // non-borrowable range.
+auto make_dangling_transform_view_subrange(const char* str) {
+    auto view = std::string(str) | tv26::views::transform(lower_lambda);
+    return std::ranges::subrange(view.begin(), view.end());
+}
+
+TEST(transform_view_, borrowability_safety_failure) {
+    const char* str    = "LOWER";
+    auto        view   = make_dangling_transform_view_subrange(str);
+    std::string result = view | std::ranges::to<std::basic_string>();
+    EXPECT_EQ(result, "lower");
+}
+#endif

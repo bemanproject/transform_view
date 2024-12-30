@@ -102,6 +102,11 @@ struct movable_box : std::optional<T> {
     using std::optional<T>::optional;
     using std::optional<T>::operator=;
 };
+
+template <class F>
+constexpr bool tidy_func =
+    std::is_empty_v<F> && std::is_trivially_default_constructible_v<F> &&
+    std::is_trivially_destructible_v<F>;
 } // namespace detail
 
 template <std::ranges::input_range V, std::move_constructible F>
@@ -158,6 +163,13 @@ class transform_view
             return std::invoke(*parent_->fun_, *current_);
         }
 
+        constexpr decltype(auto) operator*() const
+            noexcept(noexcept(std::invoke(F(), *current_)))
+            requires detail::tidy_func<F>
+        {
+            return std::invoke(F(), *current_);
+        }
+
         constexpr iterator& operator++() {
             ++current_;
             return *this;
@@ -201,7 +213,10 @@ class transform_view
         constexpr decltype(auto) operator[](difference_type n) const
             requires std::ranges::random_access_range<Base>
         {
-            return std::invoke(*parent_->fun_, current_[n]);
+            if constexpr (detail::tidy_func<F>)
+                return std::invoke(F(), current_[n]);
+            else
+                return std::invoke(*parent_->fun_, current_[n]);
         }
 
         friend constexpr bool operator==(const iterator& x, const iterator& y)
@@ -240,18 +255,18 @@ class transform_view
         friend constexpr iterator operator+(iterator i, difference_type n)
             requires std::ranges::random_access_range<Base>
         {
-            return iterator{*i.parent_, i.current_ + n};
+            return i += n;
         }
         friend constexpr iterator operator+(difference_type n, iterator i)
             requires std::ranges::random_access_range<Base>
         {
-            return iterator{*i.parent_, i.current_ + n};
+            return i += n;
         }
 
         friend constexpr iterator operator-(iterator i, difference_type n)
             requires std::ranges::random_access_range<Base>
         {
-            return iterator{*i.parent_, i.current_ - n};
+            return i -= n;
         }
         friend constexpr difference_type operator-(const iterator& x,
                                                    const iterator& y)
@@ -519,5 +534,11 @@ inline constexpr detail::adaptor<transform_impl> transform = transform_impl{};
 } // namespace views
 
 } // namespace beman::transform_view_26
+
+template <typename T, typename F>
+constexpr bool std::ranges::enable_borrowed_range<
+    beman::transform_view_26::transform_view<T, F>> =
+    std::ranges::borrowed_range<T> &&
+    beman::transform_view_26::detail::tidy_func<F>;
 
 #endif // BEMAN_TRANSFORM_VIEW_HPP
