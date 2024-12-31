@@ -105,7 +105,7 @@ struct movable_box : std::optional<T> {
 
 template <class F>
 constexpr bool tidy_func = std::is_empty_v<F> &&
-#if defined(__APPLE__)
+#if defined(__apple_build_version__)
                            std::is_default_constructible_v<F> &&
 #else
                            std::is_trivially_constructible_v<F> &&
