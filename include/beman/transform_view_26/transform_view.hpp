@@ -111,6 +111,16 @@ constexpr bool tidy_func = std::is_empty_v<F> &&
                            std::is_trivially_constructible_v<F> &&
 #endif
                            std::is_trivially_destructible_v<F>;
+
+// Workaround for shitty MSVC friendship implementation.
+#if defined(_MSC_VER)
+struct iter_access {
+    template <typename T>
+    static decltype(auto) current(const T& it) {
+        return it.current_;
+    }
+};
+#endif
 } // namespace detail
 
 template <std::ranges::input_range V, std::move_constructible F>
@@ -127,17 +137,18 @@ class transform_view
     class iterator
         : public detail::iterator_category_base<detail::maybe_const<Const, V>,
                                                 detail::maybe_const<Const, F>> {
-        template <bool>
-        friend class transform_view::sentinel;
-
-        using Parent    = detail::maybe_const<Const, transform_view>;
-        using Base      = detail::maybe_const<Const, V>;
-        Parent* parent_ = nullptr;
-#if defined(_MSC_VER)
-      public:
-#endif
+        using Parent = detail::maybe_const<Const, transform_view>;
+        using Base   = detail::maybe_const<Const, V>;
         std::ranges::iterator_t<Base> current_ =
             std::ranges::iterator_t<Base>();
+        Parent* parent_ = nullptr;
+
+#if defined(_MSC_VER)
+        friend detail::iter_access;
+#else
+        template <bool>
+        friend class sentinel;
+#endif
 
       public:
         using iterator_concept = decltype(detail::concept_tag<Base>());
@@ -309,7 +320,11 @@ class transform_view
                 std::ranges::iterator_t<detail::maybe_const<OtherConst, V>>>
         friend constexpr bool operator==(const iterator<OtherConst>& x,
                                          const sentinel&             y) {
+#if defined(_MSC_VER)
+            return detail::iter_access::current(x) == y.end_;
+#else
             return x.current_ == y.end_;
+#endif
         }
 
         template <bool OtherConst>
@@ -319,7 +334,11 @@ class transform_view
         friend constexpr std::ranges::range_difference_t<
             detail::maybe_const<OtherConst, V>>
         operator-(const iterator<OtherConst>& x, const sentinel& y) {
+#if defined(_MSC_VER)
+            return detail::iter_access::current(x) - y.end_;
+#else
             return x.current_ - y.end_;
+#endif
         }
 
         template <bool OtherConst>
@@ -329,7 +348,11 @@ class transform_view
         friend constexpr std::ranges::range_difference_t<
             detail::maybe_const<OtherConst, V>>
         operator-(const sentinel& y, const iterator<OtherConst>& x) {
+#if defined(_MSC_VER)
+            return y.end_ - detail::iter_access::current(x);
+#else
             return y.end_ - x.current_;
+#endif
         }
     };
 
