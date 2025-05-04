@@ -123,6 +123,12 @@ struct iter_access {
 #endif
 } // namespace detail
 
+/** An updated `transform_view` whose iterator constructs an `F` on the fly --
+    rather than using the one stored in the view -- when `F` can be trivially
+    constructed and destructed.  This makes this `transform_view`
+    conditionally borrowable.  Note that this template derives from
+    `view_interface`, and so has many operations not explicitly documented
+    below. */ // TODO: Provide a way to link to symbols in std::, on cppreference.
 template <std::ranges::input_range V, std::move_constructible F>
     requires std::ranges::view<V> && std::is_object_v<F> &&
              std::regular_invocable<F&, std::ranges::range_reference_t<V>> &&
@@ -360,22 +366,31 @@ class transform_view
     [[no_unique_address]] detail::movable_box<F> fun_;
 
   public:
+    /** Default cosntructor. */
     transform_view()
         requires std::default_initializable<V> && std::default_initializable<F>
     = default;
+    /** Construct from `base` and `fun`.  Each argument is moved into
+        `*this`. */
     constexpr explicit transform_view(V base, F fun)
         : base_(std::move(base)), fun_(std::move(fun)) {}
 
+    /** Returns a constant reference to the underlying view `base_`. */
     constexpr V base() const&
         requires std::copy_constructible<V>
     {
         return base_;
     }
+
+    /** Returns the underlying view `base_`, by move. */
     constexpr V base() && { return std::move(base_); }
 
+    /** Returns a non-`const` iterator for the beginning of `*this`. */
     constexpr iterator<false> begin() {
         return iterator<false>{*this, std::ranges::begin(base_)};
     }
+
+    /** Returns a `const` iterator for the beginning of `*this`. */
     constexpr iterator<true> begin() const
         requires std::ranges::range<const V> &&
                  std::regular_invocable<const F&,
@@ -384,14 +399,19 @@ class transform_view
         return iterator<true>{*this, std::ranges::begin(base_)};
     }
 
+    /** Returns a non-`const` sentinel for the end of `*this`. */
     constexpr sentinel<false> end() {
         return sentinel<false>{std::ranges::end(base_)};
     }
+
+    /** Returns a non-`const` iterator for the end of `*this`. */
     constexpr iterator<false> end()
         requires std::ranges::common_range<V>
     {
         return iterator<false>{*this, std::ranges::end(base_)};
     }
+
+    /** Returns a `const` sentinel for the end of `*this`. */
     constexpr sentinel<true> end() const
         requires std::ranges::range<const V> &&
                  std::regular_invocable<const F&,
@@ -399,6 +419,8 @@ class transform_view
     {
         return sentinel<true>{std::ranges::end(base_)};
     }
+
+    /** Returns a `const` iterator for the end of `*this`. */
     constexpr iterator<true> end() const
         requires std::ranges::common_range<const V> &&
                  std::regular_invocable<const F&,
@@ -407,11 +429,14 @@ class transform_view
         return iterator<true>{*this, std::ranges::end(base_)};
     }
 
+    /** Returns the number of elements in `*this`. */
     constexpr auto size()
         requires std::ranges::sized_range<V>
     {
         return std::ranges::size(base_);
     }
+
+    /** Returns the number of elements in `*this`. */
     constexpr auto size() const
         requires std::ranges::sized_range<const V>
     {
@@ -419,6 +444,8 @@ class transform_view
     }
 };
 
+/** Deduction guide for constructing a `transform_view` from a
+    `viewable_range`. */
 template <typename R, typename F>
 transform_view(R&&, F) -> transform_view<std::ranges::views::all_t<R>, F>;
 
@@ -561,6 +588,7 @@ struct transform_impl {
     }
 };
 
+/** The `transform` range adaptor; used to create `transform_view`s. */
 inline constexpr detail::adaptor<transform_impl> transform = transform_impl{};
 } // namespace views
 
