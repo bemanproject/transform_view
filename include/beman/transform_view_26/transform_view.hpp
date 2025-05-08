@@ -366,7 +366,7 @@ class transform_view
     [[no_unique_address]] detail::movable_box<F> fun_;
 
   public:
-    /** Default cosntructor. */
+    /** Default constructor. */
     transform_view()
         requires std::default_initializable<V> && std::default_initializable<F>
     = default;
