@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/transform_view_26/transform_view.hpp>
+#include <beman/transform_view/transform_view.hpp>
 
 #include <iostream>
 
-namespace tv26 = beman::transform_view_26;
+namespace tv26 = beman::transform_view;
 
 int main() {
     auto to_lower = [](char c) { return char(c + 0x20); };

@@ -2,16 +2,16 @@
 SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 -->
 
-# beman.transform_view_26: A conditionally borrowed `std::ranges::transform_view`
+# beman.transform_view: A conditionally borrowed `std::ranges::transform_view`
 
-<img src="https://github.com/bemanproject/beman/blob/main/images/logos/beman_logo-beman_library_under_development.png" style="width:5%; height:auto;"> ![Continuous Integration Tests](https://github.com/tzlaine/transform_view_26/actions/workflows/ci_tests.yml/badge.svg) ![Code Format](https://github.com/tzlaine/transform_view_26/actions/workflows/pre-commit.yml/badge.svg)
+<img src="https://github.com/bemanproject/beman/blob/main/images/logos/beman_logo-beman_library_under_development.png" style="width:5%; height:auto;"> ![Continuous Integration Tests](https://github.com/tzlaine/transform_view/actions/workflows/ci_tests.yml/badge.svg) ![Code Format](https://github.com/tzlaine/transform_view/actions/workflows/pre-commit.yml/badge.svg)
 
-**Implements**: [`transform_view_26` (P3117)](https://wg21.link/P3117)
+**Implements**: [`transform_view` (P3117)](https://wg21.link/P3117)
 
 **Status**: [Under development and not yet ready for production use.](https://github.com/bemanproject/beman/blob/main/docs/BEMAN_LIBRARY_MATURITY_MODEL.md#under-development-and-not-yet-ready-for-production-use)
 
-This library contains only `beman::transform_view_26::transform_view` and its
-associated view adaptor `beman::transform_view_26::transform`.  These work
+This library contains only `beman::transform_view::transform_view` and its
+associated view adaptor `beman::transform_view::transform`.  These work
 exactly like `std::ranges::transform_view` and `std::ranges::transform`,
 except that the `beman` `transform_view` is a `borrowable_range` if its
 adapted view `V` is borrowable, and if `detail::tidy_func<F>` is true for the
@@ -30,11 +30,11 @@ it uses `F`, rather than going back to the parent `transform_view`.
 ### Usage
 
 ```c++
-#include <beman/transform_view_26/transform_view.hpp>
+#include <beman/transform_view/transform_view.hpp>
 
 #include <iostream>
 
-namespace tv26 = beman::transform_view_26;
+namespace tv26 = beman::transform_view;
 
 int main() {
     auto to_lower = [](char c) { return char(c + 0x20); };
@@ -49,7 +49,7 @@ int main() {
 }
 ```
 
-## Building beman.transform_view_26
+## Building beman.transform_view
 
 ### Dependencies
 This project has no C or C++ dependencies.
@@ -63,7 +63,7 @@ Build-time dependencies:
 #### How to install dependencies
 
 <details>
-<summary>Dependencies install transform_view_26 on Ubuntu 24.04  </summary>
+<summary>Dependencies install transform_view on Ubuntu 24.04  </summary>
 
 ```shell
 # Install tools:
@@ -78,7 +78,7 @@ apt-get install                           \
 </details>
 
 <details>
-<summary>Dependencies install transform_view_26 on MAC OS $VERSION </summary>
+<summary>Dependencies install transform_view on MAC OS $VERSION </summary>
 
 <!-- TODO Darius: rewrite section!-->
 ```shell
@@ -88,7 +88,7 @@ apt-get install                           \
 </details>
 
 <details>
-<summary>Dependencies install transform_view_26 on Windows $VERSION  </summary>
+<summary>Dependencies install transform_view on Windows $VERSION  </summary>
 <!-- TODO Darius: rewrite section!-->
 
 ```shell
@@ -97,23 +97,23 @@ apt-get install                           \
 
 </details>
 
-### How to build beman.transform_view_26
+### How to build beman.transform_view
 
 This project strives to be as normal and simple a CMake project as possible.
 This build workflow in particular will work,
-producing a static `libbeman.transform_view_26.a` library, ready to package with its headers:
+producing a static `libbeman.transform_view.a` library, ready to package with its headers:
 
 ```shell
 cmake --workflow --preset gcc-debug
 cmake --workflow --preset gcc-release
-cmake --install build/gcc-release --prefix /opt/beman.transform_view_26
+cmake --install build/gcc-release --prefix /opt/beman.transform_view
 ```
 
 <details>
-<summary> Build beman.transform_view_26 (verbose logs) </summary>
+<summary> Build beman.transform_view (verbose logs) </summary>
 
 ```shell
-# Configure beman.transform_view_26 via gcc-debug workflow for development.
+# Configure beman.transform_view via gcc-debug workflow for development.
 $ cmake --workflow --preset gcc-debug
 Executing workflow step 1 of 3: configure preset "gcc-debug"
 
@@ -127,15 +127,15 @@ Preset CMake variables:
 Examples to be built: transform_view_direct_usage
 -- Configuring done (0.3s)
 -- Generating done (0.0s)
--- Build files have been written to: /home/tzlaine/transform_view_26/build/gcc-debug
+-- Build files have been written to: /home/tzlaine/transform_view/build/gcc-debug
 
 Executing workflow step 2 of 3: build preset "gcc-debug"
 
-[6/6] Linking CXX executable tests/beman/transform_view_26/beman.transform_view_26.tests.transform_view
+[6/6] Linking CXX executable tests/beman/transform_view/beman.transform_view.tests.transform_view
 
 Executing workflow step 3 of 3: test preset "gcc-debug"
 
-Test project /home/tzlaine/transform_view_26/build/gcc-debug
+Test project /home/tzlaine/transform_view/build/gcc-debug
       Start  1: transform_view_.iter_concept_categroy
  1/25 Test  #1: transform_view_.iter_concept_categroy ......................   Passed    0.01 sec
       Start  2: transform_view_.default_ctor
@@ -191,7 +191,7 @@ Test project /home/tzlaine/transform_view_26/build/gcc-debug
 
 Total Test time (real) =   0.60 sec
 
-# Configure beman.transform_view_26 via gcc-release workflow for direct usage.
+# Configure beman.transform_view via gcc-release workflow for direct usage.
 $ cmake --workflow --preset gcc-release
 Executing workflow step 1 of 3: configure preset "gcc-release"
 
@@ -205,15 +205,15 @@ Preset CMake variables:
 Examples to be built: transform_view_direct_usage
 -- Configuring done (0.3s)
 -- Generating done (0.0s)
--- Build files have been written to: /home/tzlaine/transform_view_26/build/gcc-release
+-- Build files have been written to: /home/tzlaine/transform_view/build/gcc-release
 
 Executing workflow step 2 of 3: build preset "gcc-release"
 
-[6/6] Linking CXX executable tests/beman/transform_view_26/beman.transform_view_26.tests.transform_view
+[6/6] Linking CXX executable tests/beman/transform_view/beman.transform_view.tests.transform_view
 
 Executing workflow step 3 of 3: test preset "gcc-release"
 
-Test project /home/tzlaine/transform_view_26/build/gcc-release
+Test project /home/tzlaine/transform_view/build/gcc-release
       Start  1: transform_view_.iter_concept_categroy
  1/25 Test  #1: transform_view_.iter_concept_categroy ......................   Passed    0.00 sec
       Start  2: transform_view_.default_ctor
@@ -270,7 +270,7 @@ Test project /home/tzlaine/transform_view_26/build/gcc-release
 Total Test time (real) =   0.04 sec
 
 # Run examples.
-$ build/gcc-release/examples/beman.transform_view_26.examples.transform_view_direct_usage
+$ build/gcc-release/examples/beman.transform_view.examples.transform_view_direct_usage
 lower
 
 ```
@@ -278,24 +278,24 @@ lower
 </details>
 
 <details>
-<summary> Install beman.transform_view_26 (verbose logs) </summary>
+<summary> Install beman.transform_view (verbose logs) </summary>
 
 ```shell
-# Install build artifacts from `build` directory into `opt/beman.transform_view_26` path.
-$ cmake --install build/gcc-release --prefix /opt/beman.transform_view_26
+# Install build artifacts from `build` directory into `opt/beman.transform_view` path.
+$ cmake --install build/gcc-release --prefix /opt/beman.transform_view
 -- Install configuration: "RelWithDebInfo"
--- Installing: /opt/beman.transform_view_26/lib/libbeman.transform_view_26.a
--- Installing: /opt/beman.transform_view_26/include/beman/transform_view_26/transform_view.hpp
+-- Installing: /opt/beman.transform_view/lib/libbeman.transform_view.a
+-- Installing: /opt/beman.transform_view/include/beman/transform_view/transform_view.hpp
 
 # Check tree.
-$ tree /opt/beman.transform_view_26
-/opt/beman.transform_view_26
+$ tree /opt/beman.transform_view
+/opt/beman.transform_view
 ├── include
 │   └── beman
-│       └── transform_view_26
+│       └── transform_view
 │           └── transform_view.hpp
 └── lib
-    └── libbeman.transform_view_26.a
+    └── libbeman.transform_view.a
 
 5 directories, 2 files
 ```
@@ -306,65 +306,65 @@ $ tree /opt/beman.transform_view_26
 <summary> Disable tests build </summary>
 
 To build this project with tests disabled (and their dependencies),
-simply use `BEMAN_TRANSFORM_VIEW_26_BUILD_TESTING=OFF` as documented in upstream [CMake documentation](https://cmake.org/cmake/help/latest/module/CTest.html):
+simply use `BEMAN_TRANSFORM_VIEW_BUILD_TESTING=OFF` as documented in upstream [CMake documentation](https://cmake.org/cmake/help/latest/module/CTest.html):
 
 ```shell
-cmake -B build -S . -DBEMAN_TRANSFORM_VIEW_26_BUILD_TESTING=OFF
+cmake -B build -S . -DBEMAN_TRANSFORM_VIEW_BUILD_TESTING=OFF
 ```
 
 </details>
 
-## Integrate beman.transform_view_26 into your project
+## Integrate beman.transform_view into your project
 
 <details>
-<summary> Use beman.transform_view_26 directly from C++ </summary>
+<summary> Use beman.transform_view directly from C++ </summary>
 
-This library is header only.  If you want to use `beman.transform_view_26` from your
-project, you can include `beman/transform_view_26/*.hpp` files from your C++ source
+This library is header only.  If you want to use `beman.transform_view` from your
+project, you can include `beman/transform_view/*.hpp` files from your C++ source
 files
 
 ```cpp
-#include <beman/transform_view_26/transform_view.hpp>
+#include <beman/transform_view/transform_view.hpp>
 ```
 
-and directly link with `libbeman.transform_view_26.a`
+and directly link with `libbeman.transform_view.a`
 
 ```shell
-# Assume /opt/beman.transform_view_26 staging directory.
+# Assume /opt/beman.transform_view staging directory.
 $ c++ -o transform_view_usage examples/transform_view_direct_usage.cpp \
-    -I /opt/beman.transform_view_26/include/ \
-    -L/opt/beman.transform_view_26/lib/ -lbeman.transform_view_26
+    -I /opt/beman.transform_view/include/ \
+    -L/opt/beman.transform_view/lib/ -lbeman.transform_view
 ```
 
 </details>
 
 <details>
-<summary> Use beman.transform_view_26 directly from CMake </summary>
+<summary> Use beman.transform_view directly from CMake </summary>
 
 <!-- TODO Darius: rewrite section! Add examples. -->
 
-For CMake based projects, you will need to use the `beman.transform_view_26` CMake module to define the `beman::transform_view_26` CMake target:
+For CMake based projects, you will need to use the `beman.transform_view` CMake module to define the `beman::transform_view` CMake target:
 
 ```cmake
-find_package(beman.transform_view_26 REQUIRED)
+find_package(beman.transform_view REQUIRED)
 ```
 
-You will also need to add `beman::transform_view_26`
-to the link libraries of any libraries or executables that include `beman/transform_view_26/*.hpp` in their source or header file.
+You will also need to add `beman::transform_view`
+to the link libraries of any libraries or executables that include `beman/transform_view/*.hpp` in their source or header file.
 
 ```cmake
-target_link_libraries(yourlib PUBLIC beman::transform_view_26)
+target_link_libraries(yourlib PUBLIC beman::transform_view)
 ```
 
 </details>
 
 <details>
-<summary> Use beman.transform_view_26 from other build systems </summary>
+<summary> Use beman.transform_view from other build systems </summary>
 
 <!-- TODO Darius: rewrite section! Add examples. -->
 
-Build systems that support `pkg-config` by providing a `beman.transform_view_26.pc` file.
-Build systems that support interoperation via `pkg-config` should be able to detect `beman.transform_view_26` for you automatically.
+Build systems that support `pkg-config` by providing a `beman.transform_view.pc` file.
+Build systems that support interoperation via `pkg-config` should be able to detect `beman.transform_view` for you automatically.
 
 </details>
 

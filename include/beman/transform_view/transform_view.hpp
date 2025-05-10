@@ -8,7 +8,7 @@
 #include <optional>
 #include <ranges>
 
-namespace beman::transform_view_26 {
+namespace beman::transform_view {
 
 namespace detail {
 template <bool Const, typename T>
@@ -592,12 +592,12 @@ struct transform_impl {
 inline constexpr detail::adaptor<transform_impl> transform = transform_impl{};
 } // namespace views
 
-} // namespace beman::transform_view_26
+} // namespace beman::transform_view
 
 template <typename T, typename F>
 constexpr bool std::ranges::enable_borrowed_range<
-    beman::transform_view_26::transform_view<T, F>> =
+    beman::transform_view::transform_view<T, F>> =
     std::ranges::borrowed_range<T> &&
-    beman::transform_view_26::detail::tidy_func<F>;
+    beman::transform_view::detail::tidy_func<F>;
 
 #endif // BEMAN_TRANSFORM_VIEW_HPP

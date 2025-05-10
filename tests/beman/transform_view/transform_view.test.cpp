@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/transform_view_26/transform_view.hpp>
+#include <beman/transform_view/transform_view.hpp>
 
 #include <gtest/gtest.h>
 
@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace tv26 = beman::transform_view_26;
+namespace tv26 = beman::transform_view;
 
 auto copy_lambda  = [](auto x) { return x; };
 auto ref_lambda   = [](auto& x) -> decltype(auto) { return x; };

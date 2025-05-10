@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.25)
 
 project(
-    beman.transform_view_26 # CMake Project Name, which is also the name of the top-level
+    beman.transform_view # CMake Project Name, which is also the name of the top-level
     # targets (e.g., library, executable, etc.).
     DESCRIPTION
         "A modified `std::ranges::transform_view` that is conditionally borrowed"
@@ -12,14 +12,14 @@ project(
 
 # [CMAKE.SKIP_TESTS]
 option(
-    BEMAN_TRANSFORM_VIEW_26_BUILD_TESTS
+    BEMAN_TRANSFORM_VIEW_BUILD_TESTS
     "Enable building tests and test infrastructure. Default: ON. Values: { ON, OFF }."
     ${PROJECT_IS_TOP_LEVEL}
 )
 
 # [CMAKE.SKIP_EXAMPLES]
 option(
-    BEMAN_TRANSFORM_VIEW_26_BUILD_EXAMPLES
+    BEMAN_TRANSFORM_VIEW_BUILD_EXAMPLES
     "Enable building examples. Default: ON. Values: { ON, OFF }."
     ${PROJECT_IS_TOP_LEVEL}
 )
@@ -27,7 +27,7 @@ option(
 include(FetchContent)
 include(GNUInstallDirs)
 
-if(BEMAN_TRANSFORM_VIEW_26_BUILD_TESTS)
+if(BEMAN_TRANSFORM_VIEW_BUILD_TESTS)
     enable_testing()
 
     # Fetch GoogleTest
@@ -44,12 +44,12 @@ if(BEMAN_TRANSFORM_VIEW_26_BUILD_TESTS)
     endblock()
 endif()
 
-add_subdirectory(src/beman/transform_view_26)
+add_subdirectory(src/beman/transform_view)
 
-if(BEMAN_TRANSFORM_VIEW_26_BUILD_TESTS)
-    add_subdirectory(tests/beman/transform_view_26)
+if(BEMAN_TRANSFORM_VIEW_BUILD_TESTS)
+    add_subdirectory(tests/beman/transform_view)
 endif()
 
-if(BEMAN_TRANSFORM_VIEW_26_BUILD_EXAMPLES)
+if(BEMAN_TRANSFORM_VIEW_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
