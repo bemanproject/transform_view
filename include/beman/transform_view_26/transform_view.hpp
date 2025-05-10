@@ -126,9 +126,9 @@ struct iter_access {
 /** An updated `transform_view` whose iterator constructs an `F` on the fly --
     rather than using the one stored in the view -- when `F` can be trivially
     constructed and destructed.  This makes this `transform_view`
-    conditionally borrowable.  Note that this template derives from
-    `view_interface`, and so has many operations not explicitly documented
-    below. */ // TODO: Provide a way to link to symbols in std::, on cppreference.
+    conditionally borrowable.  Note that this template derives from \<Stdref
+    ref="view.interface"/>, and so has many operations not explicitly
+    documented below. */
 template <std::ranges::input_range V, std::move_constructible F>
     requires std::ranges::view<V> && std::is_object_v<F> &&
              std::regular_invocable<F&, std::ranges::range_reference_t<V>> &&
