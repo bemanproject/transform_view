@@ -1,0 +1,76 @@
+# class `beman::transform_view::transform_view` 
+
+```
+class beman::transform_view::transform_view
+  : public std::ranges::view_interface< transform_view< V, F > >
+```  
+
+An updated `[transform_view](#classbeman_1_1transform__view_1_1transform__view)` whose iterator constructs an `F` on the fly  rather than using the one stored in the view  when `F` can be trivially constructed and destructed. This makes this `[transform_view](#classbeman_1_1transform__view_1_1transform__view)` conditionally borrowable. Note that this template derives from <Stdref ref="view.interface"/>, and so has many operations not explicitly documented below.
+
+## Summary
+
+ Members                        | Descriptions                                
+--------------------------------|---------------------------------------------
+`public  `[`transform_view`](#classbeman_1_1transform__view_1_1transform__view_1a152b15d92c28e3dcfd3437fd40f3d2f4)`() = default` | Default constructor.
+`public inline constexpr explicit `[`transform_view`](#classbeman_1_1transform__view_1_1transform__view_1a1a435d38ed1e8a874e4d5805855a5347)`(V base,F fun)` | Construct from `base` and `fun`. Each argument is moved into `*this`.
+`public inline constexpr V `[`base`](#classbeman_1_1transform__view_1_1transform__view_1adee80fdb46bda295db1a03f149e76c81)`() const` | Returns a constant reference to the underlying view `base_`.
+`public inline constexpr V `[`base`](#classbeman_1_1transform__view_1_1transform__view_1aeff506d40f68c62c411f274f84f2e500)`()` | Returns the underlying view `base_`, by move.
+`public inline constexpr iterator< false > `[`begin`](#classbeman_1_1transform__view_1_1transform__view_1a8f09db9fa9c6b631b7ceaa460098a615)`()` | Returns a non-`const` iterator for the beginning of `*this`.
+`public inline constexpr iterator< true > `[`begin`](#classbeman_1_1transform__view_1_1transform__view_1a40fe11cd3699753284d48c64c988de28)`() const` | Returns a `const` iterator for the beginning of `*this`.
+`public inline constexpr sentinel< false > `[`end`](#classbeman_1_1transform__view_1_1transform__view_1a854584785a2447b82ddae7b840a76cd5)`()` | Returns a non-`const` sentinel for the end of `*this`.
+`public inline constexpr iterator< false > `[`end`](#classbeman_1_1transform__view_1_1transform__view_1a4891a875c5f1c4cda44083341a0d0427)`()` | Returns a non-`const` iterator for the end of `*this`.
+`public inline constexpr sentinel< true > `[`end`](#classbeman_1_1transform__view_1_1transform__view_1a5cae292f55d05ad6bb1dc7b04129f145)`() const` | Returns a `const` sentinel for the end of `*this`.
+`public inline constexpr iterator< true > `[`end`](#classbeman_1_1transform__view_1_1transform__view_1a1af27c17630eb0a049e8ebdfd7f2cb62)`() const` | Returns a `const` iterator for the end of `*this`.
+`public inline constexpr auto `[`size`](#classbeman_1_1transform__view_1_1transform__view_1aa5171d617f36c769de61e793bda0ce10)`()` | Returns the number of elements in `*this`.
+`public inline constexpr auto `[`size`](#classbeman_1_1transform__view_1_1transform__view_1ae13107c54f99d1d611e9d486d1e8c539)`() const` | Returns the number of elements in `*this`.
+
+## Members
+
+#### `public  `[`transform_view`](#classbeman_1_1transform__view_1_1transform__view_1a152b15d92c28e3dcfd3437fd40f3d2f4)`() = default` 
+
+Default constructor.
+
+#### `public inline constexpr explicit `[`transform_view`](#classbeman_1_1transform__view_1_1transform__view_1a1a435d38ed1e8a874e4d5805855a5347)`(V base,F fun)` 
+
+Construct from `base` and `fun`. Each argument is moved into `*this`.
+
+#### `public inline constexpr V `[`base`](#classbeman_1_1transform__view_1_1transform__view_1adee80fdb46bda295db1a03f149e76c81)`() const` 
+
+Returns a constant reference to the underlying view `base_`.
+
+#### `public inline constexpr V `[`base`](#classbeman_1_1transform__view_1_1transform__view_1aeff506d40f68c62c411f274f84f2e500)`()` 
+
+Returns the underlying view `base_`, by move.
+
+#### `public inline constexpr iterator< false > `[`begin`](#classbeman_1_1transform__view_1_1transform__view_1a8f09db9fa9c6b631b7ceaa460098a615)`()` 
+
+Returns a non-`const` iterator for the beginning of `*this`.
+
+#### `public inline constexpr iterator< true > `[`begin`](#classbeman_1_1transform__view_1_1transform__view_1a40fe11cd3699753284d48c64c988de28)`() const` 
+
+Returns a `const` iterator for the beginning of `*this`.
+
+#### `public inline constexpr sentinel< false > `[`end`](#classbeman_1_1transform__view_1_1transform__view_1a854584785a2447b82ddae7b840a76cd5)`()` 
+
+Returns a non-`const` sentinel for the end of `*this`.
+
+#### `public inline constexpr iterator< false > `[`end`](#classbeman_1_1transform__view_1_1transform__view_1a4891a875c5f1c4cda44083341a0d0427)`()` 
+
+Returns a non-`const` iterator for the end of `*this`.
+
+#### `public inline constexpr sentinel< true > `[`end`](#classbeman_1_1transform__view_1_1transform__view_1a5cae292f55d05ad6bb1dc7b04129f145)`() const` 
+
+Returns a `const` sentinel for the end of `*this`.
+
+#### `public inline constexpr iterator< true > `[`end`](#classbeman_1_1transform__view_1_1transform__view_1a1af27c17630eb0a049e8ebdfd7f2cb62)`() const` 
+
+Returns a `const` iterator for the end of `*this`.
+
+#### `public inline constexpr auto `[`size`](#classbeman_1_1transform__view_1_1transform__view_1aa5171d617f36c769de61e793bda0ce10)`()` 
+
+Returns the number of elements in `*this`.
+
+#### `public inline constexpr auto `[`size`](#classbeman_1_1transform__view_1_1transform__view_1ae13107c54f99d1d611e9d486d1e8c539)`() const` 
+
+Returns the number of elements in `*this`.
+
