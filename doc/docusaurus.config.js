@@ -10,7 +10,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "transform_view_26 Beman Documentation",
+  title: "transform_view Beman Documentation",
   tagline: "",
   favicon: 'img/favicon.ico',
 
@@ -18,12 +18,12 @@ const config = {
   url: "https://www.bemanproject.org",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/transform_view_26/',
+  baseUrl: '/transform_view/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "tzlaine", // Usually your GitHub org/user name.
-  projectName: "transform_view_26", // Usually your repo name.
+  projectName: "transform_view", // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -58,7 +58,7 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: "transform_view_26 Beman Documentation",
+        title: "transform_view Beman Documentation",
         logo: {
           alt: 'Beman Logo',
           src: 'img/dragonduck.png',
