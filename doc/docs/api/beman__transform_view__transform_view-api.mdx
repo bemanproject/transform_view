@@ -5,7 +5,7 @@ class beman::transform_view::transform_view
   : public std::ranges::view_interface< transform_view< V, F > >
 ```  
 
-An updated `[transform_view](#classbeman_1_1transform__view_1_1transform__view)` whose iterator constructs an `F` on the fly  rather than using the one stored in the view  when `F` can be trivially constructed and destructed. This makes this `[transform_view](#classbeman_1_1transform__view_1_1transform__view)` conditionally borrowable. Note that this template derives from <Stdref ref="view.interface"/>, and so has many operations not explicitly documented below.
+An updated [transform_view](#classbeman_1_1transform__view_1_1transform__view) whose iterator constructs an `F` on the fly  rather than using the one stored in the view  when `F` can be trivially constructed and destructed. This makes this [transform_view](#classbeman_1_1transform__view_1_1transform__view) conditionally borrowable. Note that this template derives from <Stdref ref="view.interface"/>, and so has many operations not explicitly documented below.
 
 ## Summary
 

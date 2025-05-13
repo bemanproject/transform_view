@@ -123,10 +123,10 @@ struct iter_access {
 #endif
 } // namespace detail
 
-/** An updated `transform_view` whose iterator constructs an `F` on the fly --
+/** An updated transform_view whose iterator constructs an `F` on the fly --
     rather than using the one stored in the view -- when `F` can be trivially
-    constructed and destructed.  This makes this `transform_view`
-    conditionally borrowable.  Note that this template derives from \<Stdref
+    constructed and destructed.  This makes this transform_view conditionally
+    borrowable.  Note that this template derives from \<Stdref
     ref="view.interface"/>, and so has many operations not explicitly
     documented below. */
 template <std::ranges::input_range V, std::move_constructible F>
@@ -444,7 +444,7 @@ class transform_view
     }
 };
 
-/** Deduction guide for constructing a `transform_view` from a
+/** Deduction guide for constructing a transform_view from a
     `viewable_range`. */
 template <typename R, typename F>
 transform_view(R&&, F) -> transform_view<std::ranges::views::all_t<R>, F>;
@@ -588,7 +588,7 @@ struct transform_impl {
     }
 };
 
-/** The `transform` range adaptor; used to create `transform_view`s. */
+/** The transform range adaptor; used to create transform_views. */
 inline constexpr detail::adaptor<transform_impl> transform = transform_impl{};
 } // namespace views
 
