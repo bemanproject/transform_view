@@ -20,6 +20,13 @@ template<class F>
     is_empty_v<F> && is_trivially_default_constructible_v<F> && is_trivially_destructible_v<F>;
 ```
 
+Recent versions of Clang do not seem to implement
+`is_trivially_default_constructible`, so this is the actual version of
+`tidy-func` used in this implementation:
+
+```cpp tidy_func
+```
+
 # Usage
 
 To use the revised version of `transform_view`, simply use it as you would

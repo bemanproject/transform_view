@@ -103,6 +103,7 @@ struct movable_box : std::optional<T> {
     using std::optional<T>::operator=;
 };
 
+// [ tidy_func
 template <class F>
 constexpr bool tidy_func = std::is_empty_v<F> &&
 #if defined(__apple_build_version__)
@@ -111,6 +112,7 @@ constexpr bool tidy_func = std::is_empty_v<F> &&
                            std::is_trivially_constructible_v<F> &&
 #endif
                            std::is_trivially_destructible_v<F>;
+// ]
 
 // Workaround for shitty MSVC friendship implementation.
 #if defined(_MSC_VER)
