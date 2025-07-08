@@ -12,6 +12,6 @@ foreach(example ${ALL_EXAMPLES})
     )
     target_link_libraries(
         beman.transform_view.examples.${example}
-        beman::transform_view
+        PRIVATE beman::transform_view
     )
 endforeach()

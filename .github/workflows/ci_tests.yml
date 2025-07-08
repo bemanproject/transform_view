@@ -4,258 +4,126 @@ name: Continuous Integration Tests
 
 on:
   push:
+    branches:
+      - main
   pull_request:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
   schedule:
     - cron: '30 15 * * *'
 
 jobs:
+  beman-submodule-check:
+    uses: ./.github/workflows/reusable-beman-submodule-check.yml
+
   preset-test:
-    strategy:
-      fail-fast: false
-      matrix:
-        presets:
-          - preset: "gcc-debug"
-            platform: "ubuntu-latest"
-          - preset: "gcc-release"
-            platform: "ubuntu-latest"
-          - preset: "appleclang-debug"
-            platform: "macos-latest"
-          - preset: "appleclang-release"
-            platform: "macos-latest"
-          - preset: "msvc-debug"
-            platform: "windows-latest"
-          - preset: "msvc-release"
-            platform: "windows-latest"
-    name: "Preset: ${{ matrix.presets.preset }} on ${{ matrix.presets.platform }}"
-    runs-on: ${{ matrix.presets.platform }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup build environment
-        uses: lukka/get-cmake@latest
-        with:
-          cmakeVersion: "~3.25.0"
-          ninjaVersion: "^1.11.1"
-      - name: Setup MSVC
-        if: startsWith(matrix.presets.platform, 'windows')
-        uses: TheMrMilchmann/setup-msvc-dev@v3
-        with:
-          arch: x64
-      - name: Run preset
-        run: cmake --workflow --preset ${{ matrix.presets.preset }}
+    uses: ./.github/workflows/reusable-beman-preset-test.yml
+    with:
+      matrix_config: >
+        [
+          {"preset": "gcc-debug", "image": "ghcr.io/bemanproject/infra-containers-gcc:latest"},
+          {"preset": "gcc-release", "image": "ghcr.io/bemanproject/infra-containers-gcc:latest"},
+          {"preset": "llvm-debug", "image": "ghcr.io/bemanproject/infra-containers-clang:latest"},
+          {"preset": "llvm-release", "image": "ghcr.io/bemanproject/infra-containers-clang:latest"},
+          {"preset": "appleclang-debug", "runner": "macos-latest"},
+          {"preset": "appleclang-release", "runner": "macos-latest"},
+          {"preset": "msvc-debug", "runner": "windows-latest"},
+          {"preset": "msvc-release", "runner": "windows-latest"}
+        ]
 
-  gtest-test:
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-          - description: "Ubuntu GCC"
-            cpp: g++-14
-            c: gcc
-            os: ubuntu-latest
-          - description: "Ubuntu Clang"
-            cpp: clang++
-            c: clang
-            os: ubuntu-latest
-        cpp_version: [23, 26]
-        cmake_args:
-          - description: "Default"
-            args: ""
-          - description: "TSan"
-            args: "-DCMAKE_CXX_FLAGS=-fsanitize=thread"
-          - description: "ASan"
-            args: "-DCMAKE_CXX_FLAGS='-fsanitize=address -fsanitize=undefined'"
-
-    name: "Unit: ${{ matrix.platform.description }} ${{ matrix.cpp_version }} ${{ matrix.cmake_args.description }}"
-    runs-on: ${{ matrix.platform.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Ninja
-        uses: lukka/get-cmake@latest
-        with:
-          cmakeVersion: "~3.25.0"
-          ninjaVersion: "^1.11.1"
-      - name: Setup MSVC
-        if: startsWith(matrix.platform.os, 'windows')
-        uses: TheMrMilchmann/setup-msvc-dev@v3
-        with:
-          arch: x64
-      - name: Print installed softwares
-        shell: bash
-        run: |
-          echo "Compiler:"
-
-          # cl does not have a --version option
-          if [ "${{ matrix.platform.cpp }}" != "cl" ]; then
-            ${{ matrix.platform.cpp }} --version
-            ${{ matrix.platform.c }} --version
-          else
-            ${{ matrix.platform.cpp }}
-            ${{ matrix.platform.c }}
-          fi
-
-          echo "Build system:"
-          cmake --version
-          ninja --version
-      - name: Configure CMake
-        run: |
-          cmake -B build -S . -DCMAKE_CXX_STANDARD=${{ matrix.cpp_version }} ${{ matrix.cmake_args.args }}
-        env:
-          CC: ${{ matrix.platform.c }}
-          CXX: ${{ matrix.platform.cpp }}
-          CMAKE_GENERATOR: "Ninja Multi-Config"
-      - name: Build Release
-        run: |
-          # Portable commands only
-          cmake --build build --config Release --verbose
-          cmake --build build --config Release --target all_verify_interface_header_sets
-          cmake --install build --config Release --prefix /opt/beman.transform_view_26
-          ls -R /opt/beman.transform_view_26
-      - name: Test Release
-        run: ctest --test-dir build --build-config Release
-      - name: Build Debug
-        run: |
-          # Portable commands only
-          cmake --build build --config Debug --verbose
-          cmake --build build --config Debug --target all_verify_interface_header_sets
-          cmake --install build --config Debug --prefix /opt/beman.transform_view_26
-          ls -R /opt/beman.transform_view_26
-      - name: Test Debug
-        run: ctest --test-dir build --build-config Debug
-
-  configuration-test:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        args:
-          - name: "Disable build testing"
-            arg: "-DBEMAN_TRANSFORM_VIEW_26_BUILD_TESTS=OFF -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=g++-14"
-          - name: "Disable example building"
-            arg: "-DBEMAN_TRANSFORM_VIEW_26_BUILD_EXAMPLES=OFF -DCMAKE_CXX_STANDARD=23 -DCMAKE_CXX_COMPILER=g++-14"
-    name: "CMake: ${{ matrix.args.name }}"
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup build environment
-        uses: lukka/get-cmake@latest
-        with:
-          cmakeVersion: "~3.25.0"
-          ninjaVersion: "^1.11.1"
-      - name: Print installed softwares
-        run: |
-          cmake --version
-          ninja --version
-      - name: Configure CMake
-        run: |
-          cmake -B build -S . -DCMAKE_CXX_STANDARD=23 ${{ matrix.args.arg }}
-        env:
-          CMAKE_GENERATOR: "Ninja Multi-Config"
-      - name: Build Release
-        run: |
-          # Portable commands only
-          cmake --build build --config Release --verbose
-          cmake --build build --config Release --target all_verify_interface_header_sets
-          cmake --install build --config Release --prefix /opt/beman.transform_view_26
-          ls -R /opt/beman.transform_view_26
-      - name: Build Debug
-        run: |
-          # Portable commands only
-          cmake --build build --config Debug --verbose
-          cmake --build build --config Debug --target all_verify_interface_header_sets
-          cmake --install build --config Debug --prefix /opt/beman.transform_view_26
-          ls -R /opt/beman.transform_view_26
-
-  compiler-test:
-    runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        compilers:
-          - class: GNU
-            version: 14
-# TODO          - class: LLVM
-# TODO            version: 20
-          - class: LLVM
-            version: 19
-          - class: LLVM
-            version: 18
-    name: "Compiler: ${{ matrix.compilers.class }} ${{ matrix.compilers.version }}"
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup build environment
-        uses: lukka/get-cmake@latest
-        with:
-          cmakeVersion: "~3.25.0"
-          ninjaVersion: "^1.11.1"
-      - name: Install Compiler
-        id: install-compiler
-        run: |
-          if [ "${{ matrix.compilers.class }}" = "GNU" ]; then
-            CC=gcc-${{ matrix.compilers.version }}
-            CXX=g++-${{ matrix.compilers.version }}
-
-            sudo add-apt-repository universe
-            sudo apt-get update
-            sudo apt-get install -y $CC
-            sudo apt-get install -y $CXX
-
-            $CC --version
-            $CXX --version
-          else
-            wget https://apt.llvm.org/llvm.sh
-            chmod +x llvm.sh
-            sudo bash llvm.sh ${{ matrix.compilers.version }}
-
-            CC=clang-${{ matrix.compilers.version }}
-            CXX=clang++-${{ matrix.compilers.version }}
-
-            $CC --version
-            $CXX --version
-          fi
-
-          echo "CC=$CC" >> "$GITHUB_OUTPUT"
-          echo "CXX=$CXX" >> "$GITHUB_OUTPUT"
-      - name: Configure CMake
-        run: |
-          cmake -B build -S . -DCMAKE_CXX_STANDARD=23
-        env:
-          CC: ${{ steps.install-compiler.outputs.CC }}
-          CXX: ${{ steps.install-compiler.outputs.CXX }}
-          CMAKE_GENERATOR: "Ninja Multi-Config"
-      - name: Build Debug
-        run: |
-          cmake --build build --config Debug --verbose
-          cmake --build build --config Debug --target all_verify_interface_header_sets
-          cmake --install build --config Debug --prefix /opt/beman.transform_view_26
-          find /opt/beman.transform_view_26 -type f
-      - name: Test Debug
-        run: ctest --test-dir build --build-config Debug
-
+  build-and-test:
+    uses: ./.github/workflows/reusable-beman-build-and-test.yml
+    with:
+      matrix_config: >
+        {
+          "gcc": [
+            { "versions": ["15"],
+              "tests": [
+                { "cxxversions": ["c++26"],
+                  "tests": [
+                    { "stdlibs": ["libstdc++"],
+                      "tests": [
+                        "Debug.Default", "Release.Default", "Release.TSan",
+                        "Release.MaxSan", "Debug.Werror", "Debug.Dynamic",
+                        "Debug.Coverage"
+                      ]
+                    }
+                  ]
+                },
+                { "cxxversions": ["c++23"],
+                  "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
+                }
+              ]
+            },
+            { "versions": ["14"],
+              "tests": [
+                { "cxxversions": ["c++26", "c++23"],
+                  "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
+                }
+              ]
+            }
+          ],
+          "clang": [
+            { "versions": ["20"],
+              "tests": [
+                {"cxxversions": ["c++26"],
+                  "tests": [
+                    { "stdlibs": ["libstdc++", "libc++"],
+                      "tests": [
+                        "Debug.Default", "Release.Default", "Release.TSan",
+                        "Release.MaxSan", "Debug.Dynamic"
+                      ]
+                    }
+                  ]
+                },
+                { "cxxversions": ["c++23"],
+                  "tests": [
+                    {"stdlibs": ["libstdc++", "libc++"], "tests": ["Release.Default"]}
+                  ]
+                }
+              ]
+            },
+            { "versions": ["19"],
+              "tests": [
+                { "cxxversions": ["c++26", "c++23"],
+                  "tests": [
+                    {"stdlibs": ["libstdc++", "libc++"], "tests": ["Release.Default"]}
+                  ]
+                }
+              ]
+            },
+            { "versions": ["18"],
+              "tests": [
+                { "cxxversions": ["c++26", "c++23"],
+                  "tests": [{"stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
+                }
+              ]
+            }
+          ],
+          "appleclang": [
+            { "versions": ["latest"],
+              "tests": [
+                { "cxxversions": ["c++26", "c++23"],
+                  "tests": [{ "stdlibs": ["libc++"], "tests": ["Release.Default"]}]
+                }
+              ]
+            }
+          ],
+          "msvc": [
+            { "versions": ["latest"],
+              "tests": [
+                { "cxxversions": ["c++23"],
+                  "tests": [
+                    { "stdlibs": ["stl"],
+                      "tests": ["Debug.Default", "Release.Default", "Release.MaxSan"]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
 
   create-issue-when-fault:
-    runs-on: ubuntu-latest
-    needs: [preset-test, gtest-test, configuration-test, compiler-test]
+    needs: [preset-test, build-and-test]
     if: failure() && github.event_name == 'schedule'
-    steps:
-      # See https://github.com/cli/cli/issues/5075
-      - uses: actions/checkout@v4
-      - name: Create issue
-        run: |
-          issue_num=$(gh issue list -s open -S "[SCHEDULED-BUILD] Build & Test failure" -L 1 --json number | jq 'if length == 0 then -1 else .[0].number end')
-
-          body="**Build-and-Test Failure Report**
-          - **Time of Failure**: $(date -u '+%B %d, %Y, %H:%M %Z')
-          - **Commit**: [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
-          - **Action Run**: [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-          The scheduled build-and-test triggered by cron has failed.
-          Please investigate the logs and recent changes associated with this commit or rerun the workflow if you believe this is an error."
-
-          if [[ $issue_num -eq -1 ]]; then
-            gh issue create --repo ${{ github.repository }} --title "[SCHEDULED-BUILD] Build & Test failure" --body "$body"
-          else
-            gh issue comment --repo ${{ github.repository }} $issue_num --body "$body"
-          fi
-        env:
-          GH_TOKEN: ${{ github.token }}
+    uses: ./.github/workflows/reusable-beman-create-issue-when-fault.yml
