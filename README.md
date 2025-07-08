@@ -1,10 +1,10 @@
+# beman.transform_view: A conditionally borrowed `std::ranges::transform_view`
+
 <!--
 SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 -->
 
-# beman.transform_view: A conditionally borrowed `std::ranges::transform_view`
-
-<img src="https://github.com/bemanproject/beman/blob/main/images/logos/beman_logo-beman_library_under_development.png" style="width:5%; height:auto;"> ![Continuous Integration Tests](https://github.com/tzlaine/transform_view/actions/workflows/ci_tests.yml/badge.svg) ![Code Format](https://github.com/tzlaine/transform_view/actions/workflows/pre-commit.yml/badge.svg)
+![Library Status](https://raw.githubusercontent.com/bemanproject/beman/refs/heads/main/images/badges/beman_badge-beman_library_under_development.svg) ![Continuous Integration Tests](https://github.com/bemanproject/transform_view/actions/workflows/ci_tests.yml/badge.svg) ![Lint Check (pre-commit)](https://github.com/bemanproject/transform_view/actions/workflows/pre-commit.yml/badge.svg) [![Coverage](https://coveralls.io/repos/github/bemanproject/transform_view/badge.svg?branch=main)](https://coveralls.io/github/bemanproject/transform_view?branch=main) ![Standard Target](https://github.com/bemanproject/beman/blob/main/images/badges/cpp29.svg)
 
 **Implements**: [`transform_view` (P3117)](https://wg21.link/P3117)
 
