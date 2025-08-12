@@ -8,7 +8,7 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 **Implements**: [`transform_view` (P3117)](https://wg21.link/P3117)
 
-**Status**: [Under development and not yet ready for production use.](https://github.com/bemanproject/beman/blob/main/docs/BEMAN_LIBRARY_MATURITY_MODEL.md#under-development-and-not-yet-ready-for-production-use)
+**Status**: [Under development and not yet ready for production use.](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#under-development-and-not-yet-ready-for-production-use)
 
 This library contains only `beman::transform_view::transform_view` and its
 associated view adaptor `beman::transform_view::transform`.  These work
