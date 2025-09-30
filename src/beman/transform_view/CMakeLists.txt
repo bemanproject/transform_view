@@ -11,9 +11,9 @@ target_sources(
     beman.transform_view
     PUBLIC
         FILE_SET HEADERS
-        BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../../../include
-        FILES
-            ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/beman/transform_view/transform_view.hpp
+            BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../../../include
+            FILES
+                ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/beman/transform_view/transform_view.hpp
 )
 
 set_target_properties(
@@ -22,10 +22,10 @@ set_target_properties(
 )
 
 install(
-    TARGETS beman.transform_view COMPONENT beman.transform_view
+    TARGETS beman.transform_view
+    COMPONENT beman.transform_view
     EXPORT beman.transform_view
-    DESTINATION
-    ${CMAKE_INSTALL_LIBDIR}$<$<CONFIG:Debug>:/debug>
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}$<$<CONFIG:Debug>:/debug>
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}$<$<CONFIG:Debug>:/debug>
     FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
