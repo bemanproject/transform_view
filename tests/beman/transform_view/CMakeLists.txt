@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-find_package(GTest REQUIRED)
+find_package(GTest CONFIG REQUIRED)
 
 add_executable(beman.transform_view.tests.transform_view)
 target_sources(
@@ -19,7 +19,7 @@ target_sources(
 )
 target_link_libraries(
     beman.transform_view.tests.module_smoke_test
-    PRIVATE beman::transform_view.module
+    PRIVATE beman::transform_view_module
 )
 
 include(GoogleTest)

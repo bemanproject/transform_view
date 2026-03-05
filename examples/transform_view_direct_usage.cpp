@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/transform_view/transform_view.hpp>
-
 #include <iostream>
+#include <ranges>
+#include <string>
+
+#ifdef BEMAN_HAS_MODULES
+import beman.transform_view;
+#else
+#include <beman/transform_view/transform_view.hpp>
+#endif
 
 namespace tv26 = beman::transform_view;
 
