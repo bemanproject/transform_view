@@ -12,5 +12,15 @@ target_link_libraries(
     PRIVATE beman::transform_view GTest::gtest GTest::gtest_main
 )
 
+add_executable(beman.transform_view.tests.module_smoke_test)
+target_sources(
+    beman.transform_view.tests.module_smoke_test
+    PRIVATE module_smoke_test.test.cpp
+)
+target_link_libraries(
+    beman.transform_view.tests.module_smoke_test
+    PRIVATE beman::transform_view.module
+)
+
 include(GoogleTest)
 gtest_discover_tests(beman.transform_view.tests.transform_view)

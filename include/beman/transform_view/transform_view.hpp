@@ -3,10 +3,12 @@
 #ifndef BEMAN_TRANSFORM_VIEW_HPP
 #define BEMAN_TRANSFORM_VIEW_HPP
 
+#ifndef BEMAN_HAS_MODULES
 #include <functional>
 #include <iterator>
 #include <optional>
 #include <ranges>
+#endif
 
 namespace beman::transform_view {
 
@@ -504,7 +506,7 @@ struct bind_back_t {
   private:
     using indices = std::index_sequence_for<CapturedArgs...>;
 
-    template <typename T, size_t... I, typename... Args>
+    template <typename T, std::size_t... I, typename... Args>
     static constexpr decltype(auto)
     call_impl(T&& this_, std::index_sequence<I...>, Args&&... args) {
         return ((T&&)this_)
