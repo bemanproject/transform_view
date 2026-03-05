@@ -32,11 +32,16 @@ foreach(example ${ALL_EXAMPLES})
             PUBLIC cxx_std_23
         )
         # XXX set_target_properties(beman.transform_view.examples.${example} PROPERTIES CXX_MODULE_STD ON)
+        target_link_libraries(
+            beman.transform_view.examples.${example}
+            PRIVATE beman::transform_view_module
+        )
+    else()
+        target_link_libraries(
+            beman.transform_view.examples.${example}
+            PRIVATE beman::transform_view
+        )
     endif()
-    target_link_libraries(
-        beman.transform_view.examples.${example}
-        PRIVATE beman::transform_view_module
-    )
     add_test(
         NAME beman.transform_view.examples.${example}
         COMMAND beman.transform_view.examples.${example}
