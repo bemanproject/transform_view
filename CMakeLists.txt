@@ -25,7 +25,7 @@ option(
 )
 
 # for find of beman-install-library
-include(infra/cmake/beman-install-library-config.cmake)
+include(infra/cmake/beman-install-library.cmake)
 
 add_library(beman.transform_view INTERFACE)
 add_library(beman::transform_view ALIAS beman.transform_view)
@@ -44,8 +44,7 @@ add_subdirectory(include/beman/transform_view)
 
 include(CTest)
 
-find_package(beman-install-library REQUIRED)
-beman_install_library(beman.transform_view)
+beman_install_library(beman.transform_view TARGETS beman.transform_view)
 
 if(BEMAN_TRANSFORM_VIEW_BUILD_TESTS)
     enable_testing()
