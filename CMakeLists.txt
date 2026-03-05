@@ -2,6 +2,13 @@
 
 cmake_minimum_required(VERSION 3.28...4.2)
 
+# TODO: Set BEMAN_USE_MODULES if one of a particular set of compiler versions is being used
+
+if (BEMAN_USE_MODULES)
+  set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+  set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444")
+endif()
+
 project(
     beman.transform_view # CMake Project Name, which is also the name of the top-level
     # targets (e.g., library, executable, etc.).
@@ -41,10 +48,13 @@ set_target_properties(
 )
 
 add_subdirectory(include/beman/transform_view)
+if (BEMAN_USE_MODULES)
+    add_subdirectory(src/beman/transform_view)
+endif()
 
 include(CTest)
 
-beman_install_library(beman.transform_view TARGETS beman.transform_view)
+beman_install_library(beman.transform_view TARGETS beman.transform_view beman.transform_view.module)
 
 if(BEMAN_TRANSFORM_VIEW_BUILD_TESTS)
     enable_testing()
