@@ -4,13 +4,6 @@ cmake_minimum_required(VERSION 3.30...4.3)
 
 include(../cmake/prelude.cmake)
 
-# if(BEMAN_USE_MODULES)
-#     set(CMAKE_CXX_SCAN_FOR_MODULES ON)
-#     set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD
-#         "d0edc3af-4c50-42ea-a356-e2862fe7a444"
-#     )
-# endif()
-
 project(beman.transform_view.example LANGUAGES CXX)
 
 if(PROJECT_IS_TOP_LEVEL)
@@ -38,7 +31,7 @@ foreach(example ${ALL_EXAMPLES})
             beman.transform_view.examples.${example}
             PUBLIC cxx_std_${CMAKE_CXX_STANDARD}
         )
-        if(BEMAN_USE_STD_MODULE)
+        if(BEMAN_HAS_IMPORT_STD)
             set_target_properties(
                 beman.transform_view.examples.${example}
                 PROPERTIES CXX_MODULE_STD ON
