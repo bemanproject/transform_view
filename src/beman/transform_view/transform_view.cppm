@@ -1,6 +1,6 @@
 module;
 
-#ifndef BEMAN_HAS_IMPORT_STD
+#ifndef BEMAN_HAS_STD_MODULE
 #include <functional>
 #include <iterator>
 #include <optional>

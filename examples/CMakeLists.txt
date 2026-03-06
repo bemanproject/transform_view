@@ -11,8 +11,6 @@ if(PROJECT_IS_TOP_LEVEL)
 
     find_package(beman.transform_view 0.1.0 EXACT REQUIRED)
 
-    # XXX option(BEMAN_TRANSFORM_VIEW_IMPORT_STD "Use import std;" ${BEMAN_HAS_IMPORT_STD})
-
     enable_testing()
 endif()
 

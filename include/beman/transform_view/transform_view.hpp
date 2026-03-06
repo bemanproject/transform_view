@@ -3,7 +3,7 @@
 #ifndef BEMAN_TRANSFORM_VIEW_HPP
 #define BEMAN_TRANSFORM_VIEW_HPP
 
-#ifndef BEMAN_HAS_STD_MODULES
+#ifndef BEMAN_HAS_STD_MODULE
 #include <functional>
 #include <iterator>
 #include <optional>
