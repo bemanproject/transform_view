@@ -1,19 +1,26 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-cmake_minimum_required(VERSION 3.28...4.3)
 
-# TODO: Set BEMAN_USE_MODULES if one of a particular set of compiler versions is being used
+cmake_minimum_required(VERSION 3.30...4.3)
 
-if(BEMAN_USE_MODULES)
-    set(CMAKE_CXX_SCAN_FOR_MODULES ON)
-    set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD
-        "d0edc3af-4c50-42ea-a356-e2862fe7a444"
-    )
-endif()
+include(../cmake/prelude.cmake)
+
+# if(BEMAN_USE_MODULES)
+#     set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+#     set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD
+#         "d0edc3af-4c50-42ea-a356-e2862fe7a444"
+#     )
+# endif()
 
 project(beman.transform_view.example LANGUAGES CXX)
 
 if(PROJECT_IS_TOP_LEVEL)
+    include(../cmake/cxx-modules-rules.cmake)
+
     find_package(beman.transform_view 0.1.0 EXACT REQUIRED)
+
+    # XXX option(BEMAN_TRANSFORM_VIEW_IMPORT_STD "Use import std;" ${BEMAN_HAS_IMPORT_STD})
+
+    enable_testing()
 endif()
 
 set(ALL_EXAMPLES transform_view_direct_usage)
@@ -29,9 +36,14 @@ foreach(example ${ALL_EXAMPLES})
     if(BEMAN_USE_MODULES)
         target_compile_features(
             beman.transform_view.examples.${example}
-            PUBLIC cxx_std_23
+            PUBLIC cxx_std_${CMAKE_CXX_STANDARD}
         )
-        # XXX set_target_properties(beman.transform_view.examples.${example} PROPERTIES CXX_MODULE_STD ON)
+        if(BEMAN_USE_STD_MODULE)
+            set_target_properties(
+                beman.transform_view.examples.${example}
+                PROPERTIES CXX_MODULE_STD ON
+            )
+        endif()
         target_link_libraries(
             beman.transform_view.examples.${example}
             PRIVATE beman::transform_view_module

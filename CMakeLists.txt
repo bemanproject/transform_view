@@ -1,15 +1,15 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-cmake_minimum_required(VERSION 3.28...4.3)
+cmake_minimum_required(VERSION 3.30...4.3)
 
-# TODO: Set BEMAN_USE_MODULES if one of a particular set of compiler versions is being used
+include(./cmake/prelude.cmake)
 
-if(BEMAN_USE_MODULES)
-    set(CMAKE_CXX_SCAN_FOR_MODULES ON)
-    set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD
-        "d0edc3af-4c50-42ea-a356-e2862fe7a444"
-    )
-endif()
+# if(BEMAN_USE_MODULES)
+#     set(CMAKE_CXX_SCAN_FOR_MODULES ON)
+#     set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD
+#         "d0edc3af-4c50-42ea-a356-e2862fe7a444"
+#     )
+# endif()
 
 project(
     beman.transform_view # CMake Project Name, which is also the name of the top-level
@@ -18,6 +18,9 @@ project(
     LANGUAGES CXX
     VERSION 0.1.0
 )
+
+# Modules opt in only on compilers that support it: msvc, g++-15 and clang-20+
+include(./cmake/cxx-modules-rules.cmake)
 
 # [CMAKE.SKIP_TESTS]
 option(
@@ -51,10 +54,19 @@ add_subdirectory(include/beman/transform_view)
 if(BEMAN_USE_MODULES)
     add_library(beman.transform_view_module STATIC)
     add_library(beman::transform_view_module ALIAS beman.transform_view_module)
-
-    if(BEMAN_USE_STD_MODULES)
-        target_compile_features(beman.transform_view_module PUBLIC cxx_std_23)
-        # XXX set_target_properties(beman.transform_view_module PROPERTIES CXX_MODULE_STD ON)
+    target_compile_features(
+        beman.transform_view_module
+        PUBLIC cxx_std_${CMAKE_CXX_STANDARD}
+    )
+    if(BEMAN_USE_STD_MODULE)
+        target_compile_definitions(
+            beman.transform_view_module
+            PUBLIC BEMAN_HAS_IMPORT_STD
+        )
+        set_target_properties(
+            beman.transform_view_module
+            PROPERTIES CXX_MODULE_STD ON
+        )
     endif()
 
     target_sources(

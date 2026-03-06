@@ -260,8 +260,11 @@ function(beman_install_library name)
                 FILE_SET ${_module_sets}
                     DESTINATION "${BEMAN_DESTINATION}"
                     COMPONENT "${install_component_name}_Development"
+                # There's currently no convention for this location
                 CXX_MODULES_BMI
                     COMPONENT "${install_component_name}_Development"
+                    DESTINATION
+                        ${_config_install_dir}/bmi-${CMAKE_CXX_COMPILER_ID}_$<CONFIG>
             )
         else()
             install(

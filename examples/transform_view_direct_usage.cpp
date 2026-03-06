@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
+#ifdef BEMAN_HAS_IMPORT_STD
+import std;
+#else
 #include <iostream>
 #include <ranges>
 #include <string>
+#endif
 
 #ifdef BEMAN_HAS_MODULES
 import beman.transform_view;
