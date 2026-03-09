@@ -19,7 +19,7 @@ include(./cmake/cxx-modules-rules.cmake)
 option(
     BEMAN_TRANSFORM_VIEW_BUILD_TESTS
     "Enable building tests and test infrastructure. Default: ${PROJECT_IS_TOP_LEVEL}. Values: { ON, OFF }."
-    OFF #XXX ${PROJECT_IS_TOP_LEVEL}
+    ${PROJECT_IS_TOP_LEVEL}
 )
 
 # [CMAKE.SKIP_EXAMPLES]
@@ -64,17 +64,20 @@ if(BEMAN_USE_MODULES)
 
     target_sources(
         beman.transform_view_module
-        PUBLIC FILE_SET HEADERS BASE_DIRS include
+        PUBLIC
+            FILE_SET HEADERS
+                BASE_DIRS include
+                FILES include/beman/transform_view/transform_view.hpp
     )
 
     add_subdirectory(src/beman/transform_view)
 endif()
 
+# NOTE: CTest.cmake creates a lot of unused target here! CK
 # NOT needed! include(CTest)
 enable_testing()
 
-#XXX beman_install_library(beman.transform_view TARGETS beman.transform_view beman.transform_view_module)
-beman_install_library(beman.transform_view TARGETS beman.transform_view_module)
+beman_install_library(beman.transform_view TARGETS beman.transform_view beman.transform_view_module)
 
 if(BEMAN_TRANSFORM_VIEW_BUILD_TESTS)
     add_subdirectory(tests/beman/transform_view)

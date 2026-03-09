@@ -307,7 +307,7 @@ function(beman_install_library name)
     # expand dependencies
     # ----------------------------------------
     set(_beman_find_deps "")
-    foreach(dep IN ITEMS ${BEMAN_DEPENDENCIES})
+    foreach(dep IN LISTS BEMAN_DEPENDENCIES)
         message(
             VERBOSE
             "beman-install-library(${name}): Add find_dependency(${dep})"
