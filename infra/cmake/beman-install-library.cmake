@@ -15,8 +15,7 @@ include(GNUInstallDirs)
 # ------
 #   beman_install_library(<name>
 #     TARGETS <target1> [<target2> ...]
-#     [DEPENDENCY <package> [<version>] [EXACT]]
-#     [DEPENDENCY <package> ...]
+#     [DEPENDENCIES <dependency1> [<dependency2> ...]]
 #     [NAMESPACE <namespace>]
 #     [EXPORT_NAME <export-name>]
 #     [DESTINATION <install-prefix>]
@@ -32,16 +31,15 @@ include(GNUInstallDirs)
 # TARGETS (required)
 #   List of CMake targets to install.
 #
-# DEPENDENCY (optional, repeatable)
-#   A dependency to add as a find_dependency() call in the generated config
-#   file. Each DEPENDENCY keyword starts a new entry; all tokens up to the
-#   next keyword are passed as arguments to find_dependency(). May be
-#   specified multiple times.
+# DEPENDENCIES (optional)
+#   List of find_dependency() argument lists. Each quoted element becomes
+#   one find_dependency() call in the generated config file. Simple
+#   package names do not need quoting; entries with version or EXACT
+#   arguments must be quoted so CMake preserves them as a single list
+#   element.
 #
 #   Example:
-#     DEPENDENCY beman.inplace_vector 1.0.0
-#     DEPENDENCY beman.scope 0.0.1 EXACT
-#     DEPENDENCY fmt
+#     DEPENDENCIES fmt "beman.inplace_vector 1.0.0" "beman.scope 0.0.1 EXACT"
 #
 # NAMESPACE (optional)
 #   Namespace for exported targets.
@@ -88,59 +86,15 @@ function(beman_install_library name)
     # ----------------------------
     # Argument parsing
     # ----------------------------
-
-    # Pre-process ARGN to extract repeated DEPENDENCY entries, since
-    # cmake_parse_arguments does not support repeated keywords.
-    set(_known_keywords
-        TARGETS DEPENDENCY NAMESPACE EXPORT_NAME DESTINATION
-    )
-    set(_dependencies "")
-    set(_filtered_args "")
-    set(_in_dep FALSE)
-    set(_current_dep "")
-
-    foreach(_token ${ARGN})
-        if(_token STREQUAL "DEPENDENCY")
-            # Flush previous dependency if any
-            if(_in_dep AND NOT "${_current_dep}" STREQUAL "")
-                list(APPEND _dependencies "${_current_dep}")
-            endif()
-            set(_in_dep TRUE)
-            set(_current_dep "")
-        elseif(_in_dep AND "${_token}" IN_LIST _known_keywords)
-            # Hit another keyword; flush current dep and pass token through
-            if(NOT "${_current_dep}" STREQUAL "")
-                list(APPEND _dependencies "${_current_dep}")
-            endif()
-            set(_in_dep FALSE)
-            set(_current_dep "")
-            list(APPEND _filtered_args "${_token}")
-        elseif(_in_dep)
-            # Accumulate tokens as space-separated find_dependency() args
-            if("${_current_dep}" STREQUAL "")
-                set(_current_dep "${_token}")
-            else()
-                string(APPEND _current_dep " ${_token}")
-            endif()
-        else()
-            list(APPEND _filtered_args "${_token}")
-        endif()
-    endforeach()
-    # Flush final dependency
-    if(_in_dep AND NOT "${_current_dep}" STREQUAL "")
-        list(APPEND _dependencies "${_current_dep}")
-    endif()
-
-    set(options "")
     set(oneValueArgs NAMESPACE EXPORT_NAME DESTINATION)
-    set(multiValueArgs TARGETS)
+    set(multiValueArgs TARGETS DEPENDENCIES)
 
     cmake_parse_arguments(
         BEMAN
         "${options}"
         "${oneValueArgs}"
         "${multiValueArgs}"
-        ${_filtered_args}
+        ${ARGN}
     )
 
     if(NOT BEMAN_TARGETS)
@@ -324,12 +278,12 @@ function(beman_install_library name)
     # expand dependencies
     # ----------------------------------------
     set(_beman_find_deps "")
-    foreach(_dep IN LISTS _dependencies)
+    foreach(dep IN LISTS BEMAN_DEPENDENCIES)
         message(
             VERBOSE
-            "beman-install-library(${name}): Add find_dependency(${_dep})"
+            "beman-install-library(${name}): Add find_dependency(${dep})"
         )
-        string(APPEND _beman_find_deps "find_dependency(${_dep})\n")
+        string(APPEND _beman_find_deps "find_dependency(${dep})\n")
     endforeach()
     set(BEMAN_FIND_DEPENDENCIES "${_beman_find_deps}")
 
