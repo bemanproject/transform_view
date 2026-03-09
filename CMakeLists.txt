@@ -39,7 +39,7 @@ target_sources(beman.transform_view PUBLIC FILE_SET HEADERS BASE_DIRS include)
 
 set_target_properties(
     beman.transform_view
-    PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON
+    PROPERTIES VERIFY_INTERFACE_HEADER_SETS ${PROJECT_IS_TOP_LEVEL}
 )
 
 add_subdirectory(include/beman/transform_view)
