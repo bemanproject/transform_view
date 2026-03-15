@@ -161,8 +161,8 @@ class transform_view
       public:
         using iterator_concept = decltype(detail::concept_tag<Base>());
         using value_type       = std::remove_cvref_t<
-                  std::invoke_result_t<detail::maybe_const<Const, F>&,
-                                       std::ranges::range_reference_t<Base>>>;
+            std::invoke_result_t<detail::maybe_const<Const, F>&,
+                                 std::ranges::range_reference_t<Base>>>;
         using difference_type = std::ranges::range_difference_t<Base>;
 
         iterator()

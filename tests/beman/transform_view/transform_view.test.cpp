@@ -555,9 +555,9 @@ TEST(transform_view_, borrowability_safety) {
         EXPECT_EQ(result, "lower");
     }
     {
-        const char* str  = "UPPER";
-        auto        view = make_transform_view_subrange(str) |
-                    tv26::views::transform(upper_lambda);
+        const char* str    = "UPPER";
+        auto        view   = make_transform_view_subrange(str) |
+                             tv26::views::transform(upper_lambda);
         std::string result = view | std::ranges::to<std::basic_string>();
         EXPECT_EQ(result, "UPPER");
     }
