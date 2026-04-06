@@ -9,7 +9,7 @@ target_sources(
 )
 target_link_libraries(
     beman.transform_view.tests.transform_view
-    PRIVATE beman::transform_view GTest::gtest GTest::gtest_main
+    PRIVATE beman::transform_view GTest::gtest_main
 )
 
 include(GoogleTest)
