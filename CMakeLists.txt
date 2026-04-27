@@ -24,8 +24,9 @@ option(
     ${PROJECT_IS_TOP_LEVEL}
 )
 
-# for find of beman-install-library
+# for find of beman_install_library and configure_build_telemetry
 include(infra/cmake/beman-install-library.cmake)
+include(infra/cmake/BuildTelemetryConfig.cmake)
 
 add_library(beman.transform_view INTERFACE)
 add_library(beman::transform_view ALIAS beman.transform_view)
@@ -43,6 +44,7 @@ set_target_properties(
 add_subdirectory(include/beman/transform_view)
 
 beman_install_library(beman.transform_view TARGETS beman.transform_view)
+configure_build_telemetry()
 
 if(BEMAN_TRANSFORM_VIEW_BUILD_TESTS)
     enable_testing()
