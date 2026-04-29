@@ -1,0 +1,17 @@
+{
+  "name": "beman-transform-view",
+  "version-semver": "@VERSION@",
+  "description": "A conditionally borrowed std::ranges::transform_view",
+  "homepage": "https://github.com/bemanproject/transform_view",
+  "license": "Apache-2.0 WITH LLVM-exception",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
