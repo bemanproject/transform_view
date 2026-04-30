@@ -13,4 +13,7 @@ target_link_libraries(
 )
 
 include(GoogleTest)
-gtest_discover_tests(beman.transform_view.tests.transform_view)
+gtest_discover_tests(
+    beman.transform_view.tests.transform_view
+    DISCOVERY_TIMEOUT 60
+)

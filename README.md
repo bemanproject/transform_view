@@ -106,6 +106,17 @@ For details on building beman.transform_view without using a CMake preset, refer
 
 ### Installation
 
+#### Vcpkg
+
+The preferred way to install transform_view is via vcpkg. To do so, after installing vcpkg
+itself, you need to add support for the Beman project's [vcpkg
+registry](https://github.com/bemanproject/vcpkg-registry) by configuring a
+`vcpkg-configuration.json` file (which transform_view [provides](vcpkg-configuration.json)).
+
+Then, simply run `vcpkg install beman-transform-view`.
+
+#### Manual
+
 To install beman.transform_view globally after building with the `gcc-release` preset, you can
 run:
 
