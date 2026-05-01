@@ -75,7 +75,7 @@ You can disable building tests by setting CMake option `BEMAN_TRANSFORM_VIEW_BUI
 
 | Compiler   | Version | C++ Standards | Standard Library  |
 |------------|---------|---------------|-------------------|
-| GCC        | 15-14   | C++26, C++23  | libstdc++         |
+| GCC        | 16-14   | C++26, C++23  | libstdc++         |
 | Clang      | 22-19   | C++26, C++23  | libstdc++, libc++ |
 | Clang      | 18      | C++23         | libstdc++         |
 | AppleClang | latest  | C++26, C++23  | libc++            |
