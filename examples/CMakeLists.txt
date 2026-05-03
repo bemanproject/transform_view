@@ -14,4 +14,10 @@ foreach(example ${ALL_EXAMPLES})
         beman.transform_view.examples.${example}
         PRIVATE beman::transform_view
     )
+    if(BEMAN_TRANSFORM_VIEW_USE_MODULES)
+        set_target_properties(
+            beman.transform_view.examples.${example}
+            PROPERTIES CXX_MODULE_STD ON
+        )
+    endif()
 endforeach()
