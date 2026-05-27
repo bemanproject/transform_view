@@ -8,7 +8,7 @@ project(
     beman.transform_view
     DESCRIPTION "A conditionally borrowed std::ranges::transform_view"
     LANGUAGES CXX
-    VERSION 0.2.0
+    VERSION 0.2.1
 )
 
 # [CMAKE.SKIP_TESTS]
