@@ -1,0 +1,10 @@
+{
+  "name": "beman-transform-view",
+  "version-semver": "0.2.1",
+  "dependencies": [
+    {
+      "name": "gtest",
+      "host": true
+    }
+  ]
+}

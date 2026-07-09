@@ -3,10 +3,21 @@
 #ifndef BEMAN_TRANSFORM_VIEW_HPP
 #define BEMAN_TRANSFORM_VIEW_HPP
 
+#include <beman/transform_view/config.hpp>
+
+#if BEMAN_TRANSFORM_VIEW_USE_MODULES() && \
+    !defined(BEMAN_TRANSFORM_VIEW_INCLUDED_FROM_INTERFACE_UNIT)
+
+import beman.transform_view;
+
+#else
+
+#if !BEMAN_TRANSFORM_VIEW_USE_MODULES()
 #include <functional>
 #include <iterator>
 #include <optional>
 #include <ranges>
+#endif
 
 namespace beman::transform_view {
 
@@ -38,10 +49,10 @@ constexpr auto category_tag() {
         return 0; // int means "no tag"
     } else {
         constexpr bool call_result_is_ref = std::is_reference_v<
-            std::invoke_result_t<F&, std::ranges::range_reference_t<Base>>>;
+            std::invoke_result_t<F&, std::ranges::range_reference_t<Base> > >;
         if constexpr (call_result_is_ref) {
             using C = typename std::iterator_traits<
-                std::ranges::iterator_t<Base>>::iterator_category;
+                std::ranges::iterator_t<Base> >::iterator_category;
             if constexpr (std::derived_from<C, std::contiguous_iterator_tag>) {
                 return std::random_access_iterator_tag{};
             } else {
@@ -133,18 +144,18 @@ struct iter_access {
     documented below. */
 template <std::ranges::input_range V, std::move_constructible F>
     requires std::ranges::view<V> && std::is_object_v<F> &&
-             std::regular_invocable<F&, std::ranges::range_reference_t<V>> &&
+             std::regular_invocable<F&, std::ranges::range_reference_t<V> > &&
              detail::can_ref<
-                 std::invoke_result_t<F&, std::ranges::range_reference_t<V>>>
+                 std::invoke_result_t<F&, std::ranges::range_reference_t<V> > >
 class transform_view
-    : public std::ranges::view_interface<transform_view<V, F>> {
+    : public std::ranges::view_interface<transform_view<V, F> > {
     template <bool Const>
     class sentinel;
 
     template <bool Const>
-    class iterator
-        : public detail::iterator_category_base<detail::maybe_const<Const, V>,
-                                                detail::maybe_const<Const, F>> {
+    class iterator : public detail::iterator_category_base<
+                         detail::maybe_const<Const, V>,
+                         detail::maybe_const<Const, F> > {
         using Parent = detail::maybe_const<Const, transform_view>;
         using Base   = detail::maybe_const<Const, V>;
         std::ranges::iterator_t<Base> current_ =
@@ -162,18 +173,19 @@ class transform_view
         using iterator_concept = decltype(detail::concept_tag<Base>());
         using value_type       = std::remove_cvref_t<
             std::invoke_result_t<detail::maybe_const<Const, F>&,
-                                 std::ranges::range_reference_t<Base>>>;
+                                 std::ranges::range_reference_t<Base> > >;
         using difference_type = std::ranges::range_difference_t<Base>;
 
         iterator()
-            requires std::default_initializable<std::ranges::iterator_t<Base>>
+            requires std::default_initializable<std::ranges::iterator_t<Base> >
         = default;
         constexpr iterator(Parent&                       parent,
                            std::ranges::iterator_t<Base> current)
             : current_(std::move(current)), parent_(std::addressof(parent)) {}
         constexpr iterator(iterator<!Const> i)
-            requires Const && std::convertible_to<std::ranges::iterator_t<V>,
-                                                  std::ranges::iterator_t<Base>>
+            requires Const
+                         && std::convertible_to<std::ranges::iterator_t<V>,
+                                                std::ranges::iterator_t<Base> >
             : current_(std::move(i.current_)), parent_(i.parent_) {}
 
         constexpr const std::ranges::iterator_t<Base>& base() const& noexcept {
@@ -245,7 +257,7 @@ class transform_view
         }
 
         friend constexpr bool operator==(const iterator& x, const iterator& y)
-            requires std::equality_comparable<std::ranges::iterator_t<Base>>
+            requires std::equality_comparable<std::ranges::iterator_t<Base> >
         {
             return x.current_ == y.current_;
         }
@@ -273,7 +285,7 @@ class transform_view
 #if !defined(__APPLE__)
         friend constexpr auto operator<=>(const iterator& x, const iterator& y)
             requires std::ranges::random_access_range<Base> &&
-                     std::three_way_comparable<std::ranges::iterator_t<Base>>
+                     std::three_way_comparable<std::ranges::iterator_t<Base> >
         {
             return x.current_ <=> y.current_;
         }
@@ -298,7 +310,7 @@ class transform_view
         friend constexpr difference_type operator-(const iterator& x,
                                                    const iterator& y)
             requires std::sized_sentinel_for<std::ranges::iterator_t<Base>,
-                                             std::ranges::iterator_t<Base>>
+                                             std::ranges::iterator_t<Base> >
         {
             return x.current_ - y.current_;
         }
@@ -316,8 +328,9 @@ class transform_view
         constexpr explicit sentinel(std::ranges::sentinel_t<Base> end)
             : end_(end) {}
         constexpr sentinel(sentinel<!Const> i)
-            requires Const && std::convertible_to<std::ranges::sentinel_t<V>,
-                                                  std::ranges::sentinel_t<Base>>
+            requires Const
+                     && std::convertible_to<std::ranges::sentinel_t<V>,
+                                            std::ranges::sentinel_t<Base> >
             : end_(std::move(i.end_)) {}
 
         constexpr std::ranges::sentinel_t<Base> base() const { return end_; }
@@ -325,7 +338,7 @@ class transform_view
         template <bool OtherConst>
             requires std::sentinel_for<
                 std::ranges::sentinel_t<Base>,
-                std::ranges::iterator_t<detail::maybe_const<OtherConst, V>>>
+                std::ranges::iterator_t<detail::maybe_const<OtherConst, V> > >
         friend constexpr bool operator==(const iterator<OtherConst>& x,
                                          const sentinel&             y) {
 #if defined(_MSC_VER)
@@ -338,9 +351,9 @@ class transform_view
         template <bool OtherConst>
             requires std::sized_sentinel_for<
                 std::ranges::sentinel_t<Base>,
-                std::ranges::iterator_t<detail::maybe_const<OtherConst, V>>>
+                std::ranges::iterator_t<detail::maybe_const<OtherConst, V> > >
         friend constexpr std::ranges::range_difference_t<
-            detail::maybe_const<OtherConst, V>>
+            detail::maybe_const<OtherConst, V> >
         operator-(const iterator<OtherConst>& x, const sentinel& y) {
 #if defined(_MSC_VER)
             return detail::iter_access::current(x) - y.end_;
@@ -352,9 +365,9 @@ class transform_view
         template <bool OtherConst>
             requires std::sized_sentinel_for<
                 std::ranges::sentinel_t<Base>,
-                std::ranges::iterator_t<detail::maybe_const<OtherConst, V>>>
+                std::ranges::iterator_t<detail::maybe_const<OtherConst, V> > >
         friend constexpr std::ranges::range_difference_t<
-            detail::maybe_const<OtherConst, V>>
+            detail::maybe_const<OtherConst, V> >
         operator-(const sentinel& y, const iterator<OtherConst>& x) {
 #if defined(_MSC_VER)
             return y.end_ - detail::iter_access::current(x);
@@ -395,8 +408,9 @@ class transform_view
     /** Returns a `const` iterator for the beginning of `*this`. */
     constexpr iterator<true> begin() const
         requires std::ranges::range<const V> &&
-                 std::regular_invocable<const F&,
-                                        std::ranges::range_reference_t<const V>>
+                 std::regular_invocable<
+                     const F&,
+                     std::ranges::range_reference_t<const V> >
     {
         return iterator<true>{*this, std::ranges::begin(base_)};
     }
@@ -416,8 +430,9 @@ class transform_view
     /** Returns a `const` sentinel for the end of `*this`. */
     constexpr sentinel<true> end() const
         requires std::ranges::range<const V> &&
-                 std::regular_invocable<const F&,
-                                        std::ranges::range_reference_t<const V>>
+                 std::regular_invocable<
+                     const F&,
+                     std::ranges::range_reference_t<const V> >
     {
         return sentinel<true>{std::ranges::end(base_)};
     }
@@ -425,8 +440,9 @@ class transform_view
     /** Returns a `const` iterator for the end of `*this`. */
     constexpr iterator<true> end() const
         requires std::ranges::common_range<const V> &&
-                 std::regular_invocable<const F&,
-                                        std::ranges::range_reference_t<const V>>
+                 std::regular_invocable<
+                     const F&,
+                     std::ranges::range_reference_t<const V> >
     {
         return iterator<true>{*this, std::ranges::end(base_)};
     }
@@ -504,7 +520,7 @@ struct bind_back_t {
   private:
     using indices = std::index_sequence_for<CapturedArgs...>;
 
-    template <typename T, size_t... I, typename... Args>
+    template <typename T, std::size_t... I, typename... Args>
     static constexpr decltype(auto)
     call_impl(T&& this_, std::index_sequence<I...>, Args&&... args) {
         return ((T&&)this_)
@@ -525,7 +541,7 @@ constexpr auto bind_back(Func&& f, Args&&... args) {
 }
 
 template <typename D>
-    requires std::is_class_v<D> && std::same_as<D, std::remove_cv_t<D>>
+    requires std::is_class_v<D> && std::same_as<D, std::remove_cv_t<D> >
 struct range_adaptor_closure {
     template <typename T>
         requires std::invocable<D, T>
@@ -544,7 +560,7 @@ struct range_adaptor_closure {
 #endif
 
 template <typename F>
-struct closure : range_adaptor_closure<closure<F>> {
+struct closure : range_adaptor_closure<closure<F> > {
     constexpr closure(F f) : f_(f) {}
 
     template <typename T>
@@ -598,8 +614,11 @@ inline constexpr detail::adaptor<transform_impl> transform = transform_impl{};
 
 template <typename T, typename F>
 constexpr bool std::ranges::enable_borrowed_range<
-    beman::transform_view::transform_view<T, F>> =
+    beman::transform_view::transform_view<T, F> > =
     std::ranges::borrowed_range<T> &&
     beman::transform_view::detail::tidy_func<F>;
+
+#endif // BEMAN_TRANSFORM_VIEW_USE_MODULES() &&
+       // !defined(BEMAN_TRANSFORM_VIEW_INCLUDED_FROM_INTERFACE_UNIT)
 
 #endif // BEMAN_TRANSFORM_VIEW_HPP

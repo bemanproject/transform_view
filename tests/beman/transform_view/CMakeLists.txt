@@ -11,6 +11,15 @@ target_link_libraries(
     beman.transform_view.tests.transform_view
     PRIVATE beman::transform_view GTest::gtest_main
 )
+if(BEMAN_TRANSFORM_VIEW_USE_MODULES)
+    set_target_properties(
+        beman.transform_view.tests.transform_view
+        PROPERTIES CXX_MODULE_STD ON
+    )
+endif()
 
 include(GoogleTest)
-gtest_discover_tests(beman.transform_view.tests.transform_view)
+gtest_discover_tests(
+    beman.transform_view.tests.transform_view
+    DISCOVERY_TIMEOUT 60
+)

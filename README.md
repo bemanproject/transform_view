@@ -4,8 +4,14 @@
 SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 -->
 
-<!-- markdownlint-disable-next-line line-length -->
-![Library Status](https://raw.githubusercontent.com/bemanproject/beman/refs/heads/main/images/badges/beman_badge-beman_library_under_development.svg) ![Continuous Integration Tests](https://github.com/bemanproject/transform_view/actions/workflows/ci_tests.yml/badge.svg) ![Lint Check (pre-commit)](https://github.com/bemanproject/transform_view/actions/workflows/pre-commit-check.yml/badge.svg) [![Coverage](https://coveralls.io/repos/github/bemanproject/transform_view/badge.svg?branch=main)](https://coveralls.io/github/bemanproject/transform_view?branch=main) ![Standard Target](https://github.com/bemanproject/beman/blob/main/images/badges/cpp29.svg) [![Compiler Explorer Example](https://img.shields.io/badge/Try%20it%20on%20Compiler%20Explorer-grey?logo=compilerexplorer&logoColor=67c52a)](https://godbolt.org/z/qd6v7Kj5E)
+<!-- markdownlint-disable line-length -->
+[![Library Status](https://raw.githubusercontent.com/bemanproject/beman/refs/heads/main/images/badges/beman_badge-beman_library_under_development.svg)](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#the-beman-library-maturity-model)
+[![Continuous Integration Tests](https://github.com/bemanproject/transform_view/actions/workflows/ci_tests.yml/badge.svg)](https://github.com/bemanproject/transform_view/actions/workflows/ci_tests.yml)
+[![Lint Check (pre-commit)](https://github.com/bemanproject/transform_view/actions/workflows/pre-commit-check.yml/badge.svg)](https://github.com/bemanproject/transform_view/actions/workflows/pre-commit-check.yml)
+[![Coverage](https://coveralls.io/repos/github/bemanproject/transform_view/badge.svg?branch=main)](https://coveralls.io/github/bemanproject/transform_view?branch=main)
+![Standard Target](https://github.com/bemanproject/beman/blob/main/images/badges/cpp29.svg)
+[![Compiler Explorer Example](https://img.shields.io/badge/Try%20it%20on%20Compiler%20Explorer-grey?logo=compilerexplorer&logoColor=67c52a)](https://godbolt.org/z/qd6v7Kj5E)
+<!-- markdownlint-restore -->
 
 **Implements**: [`transform_view` (P3117R0)](https://wg21.link/P3117R0)
 
@@ -75,7 +81,7 @@ You can disable building tests by setting CMake option `BEMAN_TRANSFORM_VIEW_BUI
 
 | Compiler   | Version | C++ Standards | Standard Library  |
 |------------|---------|---------------|-------------------|
-| GCC        | 15-14   | C++26, C++23  | libstdc++         |
+| GCC        | 16-14   | C++26, C++23  | libstdc++         |
 | Clang      | 22-19   | C++26, C++23  | libstdc++, libc++ |
 | Clang      | 18      | C++23         | libstdc++         |
 | AppleClang | latest  | C++26, C++23  | libc++            |
@@ -105,6 +111,17 @@ For details on building beman.transform_view without using a CMake preset, refer
 [Contributing Guidelines](CONTRIBUTING.md).
 
 ### Installation
+
+#### Vcpkg
+
+The preferred way to install transform_view is via vcpkg. To do so, after installing vcpkg
+itself, you need to add support for the Beman project's [vcpkg
+registry](https://github.com/bemanproject/vcpkg-registry) by configuring a
+`vcpkg-configuration.json` file (which transform_view [provides](vcpkg-configuration.json)).
+
+Then, simply run `vcpkg install beman-transform-view`.
+
+#### Manual
 
 To install beman.transform_view globally after building with the `gcc-release` preset, you can
 run:
@@ -162,12 +179,6 @@ include an appropriate `beman.transform_view` header from your source code.
 ```c++
 #include <beman/transform_view/transform_view.hpp>
 ```
-
-> [!NOTE]
->
-> `beman.transform_view` headers are to be included with the `beman/transform_view/` prefix.
-> Altering include search paths to spell the include target another way (e.g.
-> `#include <transform_view.hpp>`) is unsupported.
 
 ### Project specific configure arguments
 
