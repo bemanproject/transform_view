@@ -86,7 +86,6 @@ You can disable building examples by setting CMake option `BEMAN_TRANSFORM_VIEW_
 |------------|---------|---------------|-------------------|
 | GCC        | 16-14   | C++26, C++23  | libstdc++         |
 | Clang      | 22-19   | C++26, C++23  | libstdc++, libc++ |
-| Clang      | 18      | C++23         | libstdc++         |
 | AppleClang | latest  | C++26, C++23  | libc++            |
 | MSVC       | latest  | C++23         | MSVC STL          |
 
