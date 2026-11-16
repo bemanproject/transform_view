@@ -47,4 +47,10 @@ repos:
     - id: beman-tidy
       args: [".", "--verbose", "--require-all"]
 
+  # Embd check
+  - repo: https://github.com/ptsouchlos/embd-pre-commit
+    rev: v0.5.0
+    hooks:
+      - id: embd-status
+
 exclude: 'cookiecutter/|infra/|port/'
