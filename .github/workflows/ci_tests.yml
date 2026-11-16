@@ -15,10 +15,6 @@ concurrency:
   group: ${{format('{0}:{1}', github.repository, github.ref)}}
   cancel-in-progress: true
 
-jobs:
-  beman-submodule-check:
-    uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-submodule-check.yml@1.7.5
-
   preset-test:
     uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-preset-test.yml@1.7.5
     with:
